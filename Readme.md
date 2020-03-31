@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Виталий Москвин](https://up.htmlacademy.ru/ecmascript/11/user/1326685).
-* Наставник: `Неизвестно`.
+* Наставник: [Данил Чушко](https://htmlacademy.ru/profile/flatdesign).
 
 ---
 
