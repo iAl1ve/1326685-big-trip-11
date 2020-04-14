@@ -1,5 +1,5 @@
-export const createTripCostTemplate = () => {
+export const createTripCostTemplate = (cost) => {
   return (
-    `Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>`
+    `Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>`
   );
 };
