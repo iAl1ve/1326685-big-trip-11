@@ -84,9 +84,6 @@ render(menuElement, new MenuComponent(MENU_ITEMS).getElement(), RenderPosition.A
 render(tripControlsElement, new FilterComponent(FILTERS_NAME).getElement());
 render(tripEvents, new SortComponent(SORTS_NAME).getElement());
 
-// Отобразим первый объект для редактирования
-// render(tripEvents, createTripEventEditTemplate(sortTripEvents.shift()));
-
 render(tripEvents, new DaysComponent().getElement());
 
 for (let day = 0; day < daysEvent.length; day++) {
