@@ -4,6 +4,8 @@ export const FILTERS_NAME = [`Everything`, `Future`, `Past`];
 export const SORTS_NAME = [`Event`, `Time`, `Price`];
 export const MENU_ITEMS = [`Table`, `Stats`];
 export const MAX_OFFERS_OPTION = 3;
+export const KEY_ESC = `Escape`;
+export const KEY_ESC_CODE = 27;
 
 export const CITIES = [`London`, `Edinburg`, `Amsterdam`, `Geneva`, `Milan`, `Chamonix`];
 

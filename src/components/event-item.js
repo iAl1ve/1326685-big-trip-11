@@ -1,19 +1,19 @@
 import {MAX_OFFERS_OPTION, POINTS_TYPE_ACTIVITY} from "../const.js";
-import {formatTime, formatTimeDuration} from "../utils.js";
+import {createElement, formatTime, formatTimeDuration} from "../utils.js";
 
-const createTripEventOffersMarkup = (it) => {
+const createTripEventOffersMarkup = (offer) => {
   return (
     `<li class="event__offer">
-       <span class="event__offer-title">${it.text}</span>
+       <span class="event__offer-title">${offer.text}</span>
        &plus;
-       &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
+       &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
     </li>`
   );
 };
 
 export const createTripEventItemTemplate = (tripEvent) => {
   const {type, city, price, offers, startDate, endDate} = tripEvent;
-  const isTypeActivity = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+  const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
   const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`);
 
   return (
@@ -22,7 +22,7 @@ export const createTripEventItemTemplate = (tripEvent) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${isTypeActivity} ${city}</h3>
+        <h3 class="event__title">${type} ${typePrefix} ${city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -49,3 +49,25 @@ export const createTripEventItemTemplate = (tripEvent) => {
     </li>`
   );
 };
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventItemTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
