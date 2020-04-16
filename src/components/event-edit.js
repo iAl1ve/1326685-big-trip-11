@@ -1,5 +1,5 @@
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers as listOffers} from "../const.js";
-import {formatTime} from "../utils.js";
+import {formatTime, createElement} from "../utils.js";
 
 const createTypeMarkup = (type) => {
   return (
@@ -37,7 +37,7 @@ const createImageMarkup = (image) => {
   );
 };
 
-export const createTripEventEditTemplate = (tripEvent) => {
+const createTripEventEditTemplate = (tripEvent) => {
   const {type, city, description, price, offers, images, startDate, endDate} = tripEvent;
   const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it)).join(`\n`);
   const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it)).join(`\n`);
@@ -132,3 +132,25 @@ export const createTripEventEditTemplate = (tripEvent) => {
     </form>`
   );
 };
+
+export default class EventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,5 +1,11 @@
 const MAX_DAY_GENERATION = 3;
 
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
+};
+
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
 
@@ -35,15 +41,18 @@ export const formatTime = (date, mode = `show`) => {
   const month = castTimeFormat(date.getMonth());
   const monthStr = castTimeFormat(date.getMonth() + 1);
   const days = castTimeFormat(date.getDate());
-  const hours = castTimeFormat(date.getHours() % 12);
+  const hours = castTimeFormat(date.getHours());
   const minutes = castTimeFormat(date.getMinutes());
-  let result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
+  let result;
   switch (mode) {
     case `datetime` :
       result = `${date.getUTCFullYear()}-${month}-${days}-T${hours}:${minutes}`;
       break;
     case `dayitem` :
       result = `${date.getUTCFullYear()}-${month}-${days}`;
+      break;
+    default:
+      result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
       break;
   }
   return result;
@@ -56,4 +65,22 @@ export const formatTimeDuration = (duration) => {
   const hours = Math.round((time - minutes) / 60 - days * 24);
 
   return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
 };

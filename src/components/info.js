@@ -1,6 +1,7 @@
 import {MONTHS} from "../const.js";
+import {createElement} from "../utils.js";
 
-export const createTripInfoTemplate = (days, months, cities) => {
+const createTripInfoTemplate = (days, months, cities) => {
   let tripTitle = ``;
   let tripDates = `${days[0]}&nbsp;&mdash;&nbsp;${days[days.length - 1]}`;
   if (cities.length < 3) {
@@ -23,3 +24,27 @@ export const createTripInfoTemplate = (days, months, cities) => {
     </section>`
   );
 };
+
+export default class TripInfo {
+  constructor(days, months, cities) {
+    this._days = days;
+    this._months = months;
+    this._cities = cities;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._days, this._months, this._cities);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

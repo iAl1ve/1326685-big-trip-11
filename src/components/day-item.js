@@ -1,6 +1,7 @@
 import {MONTHS} from "../const.js";
+import {createElement} from "../utils.js";
 
-export const createTripDaysItemTemplate = (index, date) => {
+const createTripDaysItemTemplate = (index, date) => {
   const str = /(\d{1,4})-(\d{2})-(\d{2})/;
   const dateMonth = str.exec(date);
 
@@ -13,3 +14,26 @@ export const createTripDaysItemTemplate = (index, date) => {
     </li>`
   );
 };
+
+export default class Day {
+  constructor(index, date) {
+    this._index = index;
+    this._date = date;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDaysItemTemplate(this._index, this._date);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
