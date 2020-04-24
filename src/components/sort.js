@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createTripSortMarkup = (name, isChecked) => {
   return (
@@ -22,24 +22,14 @@ const createTripSortTemplate = (sorts) => {
   );
 };
 
-export default class Sort {
+export default class Sort extends AbstractComponent {
   constructor(sorts) {
+    super();
     this._sorts = sorts;
     this._element = null;
   }
 
   getTemplate() {
     return createTripSortTemplate(this._sorts);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createMenuItem = (name, isChecked) => {
   return (
@@ -16,24 +16,14 @@ const createMenuTemplate = (menuItems) => {
   );
 };
 
-export default class Menu {
+export default class Menu extends AbstractComponent {
   constructor(menuItems) {
+    super();
     this._menuItems = menuItems;
     this._element = null;
   }
 
   getTemplate() {
     return createMenuTemplate(this._menuItems);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,4 @@
-import {getRandomIntegerNumber} from "./utils.js";
+import {getRandomIntegerNumber} from "./utils/common.js";
 
 export const FILTERS_NAME = [`Everything`, `Future`, `Past`];
 export const SORTS_NAME = [`Event`, `Time`, `Price`];
