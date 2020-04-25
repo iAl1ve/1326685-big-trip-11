@@ -63,8 +63,6 @@ export default class TripController {
 
   render(events) {
     const daysComponent = this._container.getElement();
-    const tripEvents = document.querySelector(`.trip-events`);
-
     const sortTripEvents = events.slice().sort((a, b) => a.startDate - b.startDate);
 
     // Получим уникальные дни, месяцев путешествий и ВСЕ посещенные города в сгененированных моках
@@ -80,6 +78,7 @@ export default class TripController {
     const tripCost = tripMainElement.querySelector(`.trip-info`);
     render(tripCost, new CostsComponent(tripPrice));
 
+    const tripEvents = document.querySelector(`.trip-events`);
     if (events.length === 0) {
       render(tripEvents, this._noEventsComponent);
       return;
@@ -90,6 +89,7 @@ export default class TripController {
     for (let day = 0; day < daysEvent.length; day++) {
       // Отфильтруем событий по дате
       const eventsByDays = events.filter((elem) => elem.startDate.getDate() === daysEvent[day]);
+      eventsByDays.sort((a, b) => a.startDate - b.startDate);
 
       const dateEvent = [...new Set(eventsByDays.map((elem) => formatTime(elem.startDate, `dayitem`)))];
       const dayComponent = new DayComponent(day + 1, dateEvent);

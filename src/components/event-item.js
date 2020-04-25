@@ -27,9 +27,9 @@ export const createTripEventItemTemplate = (tripEvent) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${formatTime(startDate, `datetime`)}">${formatTime(startDate)}</time>
+            <time class="event__start-time" datetime="${formatTime(startDate, `datetime`)}">${formatTime(startDate, `eventtime`)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${formatTime(endDate, `datetime`)}">${formatTime(endDate)}</time>
+            <time class="event__end-time" datetime="${formatTime(endDate, `datetime`)}">${formatTime(endDate, `eventtime`)}</time>
           </p>
           <p class="event__duration">${formatTimeDuration(endDate - startDate)}</p>
         </div>

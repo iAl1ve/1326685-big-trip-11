@@ -158,6 +158,7 @@ export default class EventEdit extends AbstractComponent {
 
   setCloseButtonClickHandler(cb) {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, cb);
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
   }
 
   setSubmitHandler(cb) {

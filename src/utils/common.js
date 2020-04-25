@@ -45,6 +45,9 @@ export const formatTime = (date, mode = `show`) => {
     case `dayitem` :
       result = `${date.getUTCFullYear()}-${month}-${days}`;
       break;
+    case `eventtime` :
+      result = `${hours}:${minutes}`;
+      break;
     default:
       result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
       break;
