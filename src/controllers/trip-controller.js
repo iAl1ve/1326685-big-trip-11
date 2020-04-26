@@ -53,6 +53,53 @@ const renderEvent = (tripEventsList, event) => {
   render(tripEventsList, eventComponent);
 };
 
+const getSortedEvents = (events, sortType) => {
+  let sortedEvents = [];
+  const showingEvents = events.slice();
+
+  switch (sortType) {
+    case `sort-price`:
+      sortedEvents = showingEvents.sort((a, b) => b.price - a.price);
+      break;
+    case `sort-time`:
+      sortedEvents = showingEvents.sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+      break;
+    case `sort-event`:
+      sortedEvents = showingEvents;
+      break;
+  }
+
+  return sortedEvents;
+};
+
+const renderEvents = (daysComponent, events, sortType = `sort-event`) => {
+  if (sortType === `sort-event`) {
+    const daysEvent = [...new Set(events.map((elem) => elem.startDate.getDate()))];
+    for (let day = 0; day < daysEvent.length; day++) {
+      // Отфильтруем событий по дате
+      const eventsByDays = events.filter((elem) => elem.startDate.getDate() === daysEvent[day]);
+
+      const dateEvent = [...new Set(eventsByDays.map((elem) => formatTime(elem.startDate, `dayitem`)))];
+      const dayComponent = new DayComponent(day + 1, dateEvent);
+
+      render(daysComponent, dayComponent);
+
+      const eventListComponent = new EventListComponent();
+      render(dayComponent.getElement(), eventListComponent);
+
+      eventsByDays.forEach((event) => renderEvent(eventListComponent.getElement(), event));
+    }
+  } else {
+    const dayComponent = new DayComponent();
+    render(daysComponent, dayComponent);
+
+    const eventListComponent = new EventListComponent();
+    render(dayComponent.getElement(), eventListComponent);
+
+    events.forEach((event) => renderEvent(eventListComponent.getElement(), event));
+  }
+};
+
 export default class TripController {
   constructor(container) {
     this._container = container;
@@ -86,20 +133,15 @@ export default class TripController {
 
     render(daysComponent, this._sortComponent, RenderPosition.BEFORBEGIN);
 
-    for (let day = 0; day < daysEvent.length; day++) {
-      // Отфильтруем событий по дате
-      const eventsByDays = events.filter((elem) => elem.startDate.getDate() === daysEvent[day]);
-      eventsByDays.sort((a, b) => a.startDate - b.startDate);
+    renderEvents(daysComponent, sortTripEvents);
 
-      const dateEvent = [...new Set(eventsByDays.map((elem) => formatTime(elem.startDate, `dayitem`)))];
-      const dayComponent = new DayComponent(day + 1, dateEvent);
+    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      const sortedEvents = getSortedEvents(sortTripEvents, sortType);
+      daysComponent.innerHTML = ``;
 
-      render(daysComponent, dayComponent);
-
-      const eventListComponent = new EventListComponent();
-      render(dayComponent.getElement(), eventListComponent);
-
-      eventsByDays.forEach((event) => renderEvent(eventListComponent.getElement(), event));
-    }
+      renderEvents(daysComponent, sortedEvents, sortType);
+    });
   }
+
+
 }
