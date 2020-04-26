@@ -1,5 +1,6 @@
+import AbstractComponent from "./abstract-component.js";
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers as listOffers} from "../const.js";
-import {formatTime, createElement} from "../utils.js";
+import {formatTime} from "../utils/common.js";
 
 const createTypeMarkup = (type) => {
   return (
@@ -38,7 +39,7 @@ const createImageMarkup = (image) => {
 };
 
 const createTripEventEditTemplate = (tripEvent) => {
-  const {type, city, description, price, offers, images, startDate, endDate} = tripEvent;
+  const {type, city, description, price, offers, images, startDate, endDate, isFavorite} = tripEvent;
   const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it)).join(`\n`);
   const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it)).join(`\n`);
   const cityMarkup = CITIES.map((it) => createCityMarkup(it)).join(`\n`);
@@ -51,7 +52,7 @@ const createTripEventEditTemplate = (tripEvent) => {
     imageMarkup = images.map((it) => createImageMarkup(it)).join(`\n`);
   }
 
-  const isTypeActivity = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+  const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -78,7 +79,7 @@ const createTripEventEditTemplate = (tripEvent) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type ? type : ``} ${isTypeActivity ? isTypeActivity : ``}
+            ${type ? type : ``} ${typePrefix ? typePrefix : ``}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -108,6 +109,17 @@ const createTripEventEditTemplate = (tripEvent) => {
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
+        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        <label class="event__favorite-btn" for="event-favorite-1">
+          <span class="visually-hidden">Add to favorite</span>
+          <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+          </svg>
+        </label>
+
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -133,8 +145,9 @@ const createTripEventEditTemplate = (tripEvent) => {
   );
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
     this._element = null;
   }
@@ -143,14 +156,12 @@ export default class EventEdit {
     return createTripEventEditTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setCloseButtonClickHandler(cb) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, cb);
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
   }
 
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(cb) {
+    this.getElement().addEventListener(`submit`, cb);
   }
 }

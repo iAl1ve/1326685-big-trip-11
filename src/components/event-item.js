@@ -1,5 +1,6 @@
+import AbstractComponent from "./abstract-component.js";
 import {MAX_OFFERS_OPTION, POINTS_TYPE_ACTIVITY} from "../const.js";
-import {createElement, formatTime, formatTimeDuration} from "../utils.js";
+import {formatTime, formatTimeDuration} from "../utils/common.js";
 
 const createTripEventOffersMarkup = (offer) => {
   return (
@@ -26,9 +27,9 @@ export const createTripEventItemTemplate = (tripEvent) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${formatTime(startDate, `datetime`)}">${formatTime(startDate)}</time>
+            <time class="event__start-time" datetime="${formatTime(startDate, `datetime`)}">${formatTime(startDate, `eventtime`)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${formatTime(endDate, `datetime`)}">${formatTime(endDate)}</time>
+            <time class="event__end-time" datetime="${formatTime(endDate, `datetime`)}">${formatTime(endDate, `eventtime`)}</time>
           </p>
           <p class="event__duration">${formatTimeDuration(endDate - startDate)}</p>
         </div>
@@ -50,8 +51,9 @@ export const createTripEventItemTemplate = (tripEvent) => {
   );
 };
 
-export default class Event {
+export default class Event extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
     this._element = null;
   }
@@ -60,14 +62,7 @@ export default class Event {
     return createTripEventItemTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setEditButtonClickHandler(cb) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
   }
 }

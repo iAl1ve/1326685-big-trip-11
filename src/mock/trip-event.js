@@ -1,5 +1,5 @@
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers, price} from "../const.js";
-import {getRandomArrayItem, getRandomIntegerNumber, getRandomDate} from "../utils.js";
+import {getRandomArrayItem, getRandomIntegerNumber, getRandomDate} from "../utils/common.js";
 
 const descriptionsCount = {
   MIN: 1,
@@ -55,6 +55,7 @@ const generateEvent = () => {
     images: createPhotos(),
     startDate,
     endDate: getRandomDate(startDate),
+    isFavorite: Math.random() >= 0.5,
   };
 };
 
