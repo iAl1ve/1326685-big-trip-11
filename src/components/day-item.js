@@ -8,8 +8,10 @@ const createTripDaysItemTemplate = (index, date) => {
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${index}</span>
-        <time class="day__date" datetime="${date}">${MONTHS[parseInt(dateMonth[2], 10)]} ${dateMonth[3]}</time>
+        ${index ?
+      `<span class="day__counter">${index}</span>
+        <time class="day__date" datetime="${date}">${MONTHS[parseInt(dateMonth[2], 10)]} ${dateMonth[3]}</time>`
+      : ``}
       </div>
     </li>`
   );
