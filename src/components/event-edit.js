@@ -1,12 +1,13 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers as listOffers} from "../const.js";
-import {formatTime} from "../utils/common.js";
+import {formatTime, ucFirst} from "../utils/common.js";
+import {getRandomDescriptions, createOffers} from "../utils/data.js";
 
-const createTypeMarkup = (type) => {
+const createTypeMarkup = (elem, tripType) => {
   return (
     `<div class="event__type-item">
-      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}">
-      <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
+      <input id="event-type-${elem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem}" ${elem === tripType ? `checked` : ``} >
+      <label class="event__type-label  event__type-label--${elem}" for="event-type-${elem}-1">${ucFirst(elem)}</label>
     </div>`
   );
 };
@@ -40,8 +41,8 @@ const createImageMarkup = (image) => {
 
 const createTripEventEditTemplate = (tripEvent) => {
   const {type, city, description, price, offers, images, startDate, endDate, isFavorite} = tripEvent;
-  const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it)).join(`\n`);
-  const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it)).join(`\n`);
+  const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it, type)).join(`\n`);
+  const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const cityMarkup = CITIES.map((it) => createCityMarkup(it)).join(`\n`);
   let offersMarkup;
   let imageMarkup;
@@ -79,7 +80,7 @@ const createTripEventEditTemplate = (tripEvent) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type ? type : ``} ${typePrefix ? typePrefix : ``}
+            ${type ? ucFirst(type) : ``} ${typePrefix ? typePrefix : ``}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -145,23 +146,71 @@ const createTripEventEditTemplate = (tripEvent) => {
   );
 };
 
-export default class EventEdit extends AbstractComponent {
+export default class EventEdit extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
-    this._element = null;
+
+    this._submitHandler = null;
+    this._setCloseButtonClickHandler = null;
+    this._setFavoritesButtonClickHandler = null;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createTripEventEditTemplate(this._event);
   }
 
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setCloseButtonClickHandler(this._setCloseButtonClickHandler);
+    this.setFavoritesButtonClickHandler(this._setFavoritesButtonClickHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    const event = this._event;
+    this._event.city = event.city;
+    this._event.type = event.type;
+
+    this.rerender();
+  }
+
   setCloseButtonClickHandler(cb) {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, cb);
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
+    this._setCloseButtonClickHandler = cb;
   }
 
   setSubmitHandler(cb) {
     this.getElement().addEventListener(`submit`, cb);
+    this._submitHandler = cb;
+  }
+
+  setFavoritesButtonClickHandler(cb) {
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, cb);
+    this._setFavoritesButtonClickHandler = cb;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-group`).addEventListener(`change`, (evt) => {
+      this._event.type = evt.target.value;
+
+      this.rerender();
+    });
+
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      this._event.city = evt.target.value;
+      this._event.description = getRandomDescriptions();
+      this._event.offers = createOffers();
+
+      this.rerender();
+    });
   }
 }

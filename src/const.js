@@ -9,9 +9,9 @@ export const KEY_ESC_CODE = 27;
 
 export const CITIES = [`London`, `Edinburg`, `Amsterdam`, `Geneva`, `Milan`, `Chamonix`];
 
-export const POINTS_TYPE_TRANSFER = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
+export const POINTS_TYPE_TRANSFER = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
 
-export const POINTS_TYPE_ACTIVITY = [`Check-in`, `Sightseeing`, `Restaurant`];
+export const POINTS_TYPE_ACTIVITY = [`check-in`, `sightseeing`, `restaurant`];
 
 export const MONTHS = [
   `JAN`,

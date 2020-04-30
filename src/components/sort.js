@@ -53,7 +53,7 @@ export default class Sort extends AbstractComponent {
         this._currenSortType = sortType;
 
         // Изменяем стили в соответсвии с макетом, если это не сортировка по умолчанию
-        if (document.querySelector(`label[for="${this._currenSortType}"]`).textContent !== SORTS_NAME[0]) {
+        if (this.getElement().textContent !== SORTS_NAME[0]) {
           const activeBtnSort = document.querySelector(`.trip-sort__btn--active`);
           if (activeBtnSort) {
             activeBtnSort.classList.remove(`trip-sort__btn--active`, `trip-sort__btn--by-increase`);
