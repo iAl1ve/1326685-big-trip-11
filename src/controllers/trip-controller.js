@@ -27,7 +27,7 @@ const getSortedEvents = (events, sortType) => {
   return sortedEvents;
 };
 
-const groupingEvents = (daysComponent, dayComponent, events, onDataChange, onViewChange) => {
+const getGroupedEvents = (daysComponent, dayComponent, events, onDataChange, onViewChange) => {
   render(daysComponent, dayComponent);
 
   const eventListComponent = new EventListComponent();
@@ -51,12 +51,12 @@ const renderEvents = (daysComponent, events, onDataChange, onViewChange, sortTyp
       const dateEvent = [...new Set(eventsByDays.map((elem) => formatTime(elem.startDate, `dayitem`)))];
       const dayComponent = new DayComponent(day + 1, dateEvent);
 
-      eventController = eventController.concat(groupingEvents(daysComponent, dayComponent, eventsByDays, onDataChange, onViewChange));
+      eventController = eventController.concat(getGroupedEvents(daysComponent, dayComponent, eventsByDays, onDataChange, onViewChange));
     }
   } else {
     const dayComponent = new DayComponent();
 
-    eventController = eventController.concat(groupingEvents(daysComponent, dayComponent, events, onDataChange, onViewChange));
+    eventController = eventController.concat(getGroupedEvents(daysComponent, dayComponent, events, onDataChange, onViewChange));
   }
   return eventController;
 };

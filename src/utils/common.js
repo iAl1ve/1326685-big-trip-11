@@ -64,7 +64,7 @@ export const formatTimeDuration = (duration) => {
   return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
 
-export const ucFirst = (str) => {
+export const upperCaseFirst = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 

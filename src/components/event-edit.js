@@ -1,13 +1,13 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers as listOffers} from "../const.js";
-import {formatTime, ucFirst} from "../utils/common.js";
+import {formatTime, upperCaseFirst} from "../utils/common.js";
 import {getRandomDescriptions, createOffers} from "../utils/data.js";
 
 const createTypeMarkup = (elem, tripType) => {
   return (
     `<div class="event__type-item">
       <input id="event-type-${elem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem}" ${elem === tripType ? `checked` : ``} >
-      <label class="event__type-label  event__type-label--${elem}" for="event-type-${elem}-1">${ucFirst(elem)}</label>
+      <label class="event__type-label  event__type-label--${elem}" for="event-type-${elem}-1">${upperCaseFirst(elem)}</label>
     </div>`
   );
 };
@@ -80,7 +80,7 @@ const createTripEventEditTemplate = (tripEvent) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type ? ucFirst(type) : ``} ${typePrefix ? typePrefix : ``}
+            ${type ? upperCaseFirst(type) : ``} ${typePrefix ? typePrefix : ``}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -173,10 +173,6 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
-    this._event.city = event.city;
-    this._event.type = event.type;
-
     this.rerender();
   }
 
@@ -199,16 +195,19 @@ export default class EventEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.event__type-group`).addEventListener(`change`, (evt) => {
-      this._event.type = evt.target.value;
+    const typeGroup = element.querySelectorAll(`.event__type-group`);
 
-      this.rerender();
-    });
+    typeGroup.forEach((it) =>
+      it.addEventListener(`change`, (evt) => {
+        this._event.type = evt.target.value;
+        this._event.offers = createOffers();
+        this.rerender();
+      })
+    );
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       this._event.city = evt.target.value;
       this._event.description = getRandomDescriptions();
-      this._event.offers = createOffers();
 
       this.rerender();
     });
