@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const MAX_DAY_GENERATION = 3;
 
 export const getRandomArrayItem = (array) => {
@@ -26,42 +28,34 @@ export const getRandomDate = (date) => {
   return targetDate;
 };
 
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
+export const formatTime = (date) => {
+  return moment(date).format(`hh:mm`);
 };
 
-export const formatTime = (date, mode = `show`) => {
-  const years = castTimeFormat(date.getUTCFullYear()) % 2000;
-  const month = castTimeFormat(date.getMonth());
-  const monthStr = castTimeFormat(date.getMonth() + 1);
-  const days = castTimeFormat(date.getDate());
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-  let result;
+export const formatDate = (date, mode = `show`) => {
+  let result = ``;
   switch (mode) {
     case `datetime` :
-      result = `${date.getUTCFullYear()}-${month}-${days}-T${hours}:${minutes}`;
+      result = `YYYY-MM-DD-Thh:mm`;
       break;
     case `dayitem` :
-      result = `${date.getUTCFullYear()}-${month}-${days}`;
-      break;
-    case `eventtime` :
-      result = `${hours}:${minutes}`;
+      result = `YYYY-MM-DD`;
       break;
     default:
-      result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
+      // result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
+      result = `DD/MM/YYYY hh:mm`;
       break;
   }
-  return result;
+  return moment(date).format(result);
 };
 
-export const formatTimeDuration = (duration) => {
-  const time = Math.floor((duration) / 60000);
-  const minutes = time % 60;
-  const days = Math.round((time - minutes) / 1440);
-  const hours = Math.round((time - minutes) / 60 - days * 24);
+export const formatTimeDuration = (endDate, startDate) => {
+  const date = endDate - startDate;
+  const day = moment(date).format(`D`) - 1;
+  const hours = moment(date).format(`H`);
+  const minutes = moment(date).format(`mm`);
 
-  return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
+  return `${day > 0 ? day + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
 
 export const upperCaseFirst = (str) => {

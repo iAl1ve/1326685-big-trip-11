@@ -5,7 +5,7 @@ import EventListComponent from "../components/events-list.js";
 import EventController from "./event-controller.js";
 import TripInfoComponent from "../components/info.js";
 import CostsComponent from "../components/cost.js";
-import {formatTime, getSumPrice} from "../utils/common.js";
+import {formatDate, getSumPrice} from "../utils/common.js";
 import {render, RenderPosition} from "../utils/render.js";
 import {SORTS_NAME} from "../const.js";
 
@@ -48,7 +48,7 @@ const renderEvents = (daysComponent, events, onDataChange, onViewChange, sortTyp
       // Отфильтруем событий по дате
       const eventsByDays = events.filter((elem) => elem.startDate.getDate() === daysEvent[day]);
 
-      const dateEvent = [...new Set(eventsByDays.map((elem) => formatTime(elem.startDate, `dayitem`)))];
+      const dateEvent = [...new Set(eventsByDays.map((elem) => formatDate(elem.startDate, `dayitem`)))];
       const dayComponent = new DayComponent(day + 1, dateEvent);
 
       eventController = eventController.concat(getGroupedEvents(daysComponent, dayComponent, eventsByDays, onDataChange, onViewChange));

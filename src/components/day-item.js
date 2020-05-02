@@ -10,7 +10,7 @@ const createTripDaysItemTemplate = (index, date) => {
       <div class="day__info">
         ${index ?
       `<span class="day__counter">${index}</span>
-        <time class="day__date" datetime="${date}">${MONTHS[parseInt(dateMonth[2], 10)]} ${dateMonth[3]}</time>`
+        <time class="day__date" datetime="${date}">${MONTHS[parseInt(dateMonth[2], 10) - 1]} ${dateMonth[3]}</time>`
       : ``}
       </div>
     </li>`

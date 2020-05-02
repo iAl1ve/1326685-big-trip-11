@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {MAX_OFFERS_OPTION, POINTS_TYPE_ACTIVITY} from "../const.js";
-import {formatTime, formatTimeDuration, upperCaseFirst} from "../utils/common.js";
+import {formatTime, formatDate, formatTimeDuration, upperCaseFirst} from "../utils/common.js";
 
 const createTripEventOffersMarkup = (offer) => {
   return (
@@ -17,6 +17,12 @@ export const createTripEventItemTemplate = (tripEvent) => {
   const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
   const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`);
 
+  const startDateTime = startDate ? formatDate(startDate, `datetime`) : ``;
+  const startEventTime = startDate ? formatTime(startDate) : ``;
+  const endDateTime = endDate ? formatDate(endDate, `datetime`) : ``;
+  const endEventTime = endDate ? formatTime(endDate) : ``;
+  const timeDuration = formatTimeDuration(endDate, startDate);
+
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -27,11 +33,11 @@ export const createTripEventItemTemplate = (tripEvent) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${formatTime(startDate, `datetime`)}">${formatTime(startDate, `eventtime`)}</time>
+            <time class="event__start-time" datetime="${startDateTime}">${startEventTime}</time>
             &mdash;
-            <time class="event__end-time" datetime="${formatTime(endDate, `datetime`)}">${formatTime(endDate, `eventtime`)}</time>
+            <time class="event__end-time" datetime="${endDateTime}">${endEventTime}</time>
           </p>
-          <p class="event__duration">${formatTimeDuration(endDate - startDate)}</p>
+          <p class="event__duration">${timeDuration}</p>
         </div>
 
         <p class="event__price">
