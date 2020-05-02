@@ -29,21 +29,20 @@ export const getRandomDate = (date) => {
 };
 
 export const formatTime = (date) => {
-  return moment(date).format(`hh:mm`);
+  return moment(date).format(`HH:mm`);
 };
 
 export const formatDate = (date, mode = `show`) => {
   let result = ``;
   switch (mode) {
     case `datetime` :
-      result = `YYYY-MM-DD-Thh:mm`;
+      result = `YYYY-MM-DD-THH:mm`;
       break;
     case `dayitem` :
       result = `YYYY-MM-DD`;
       break;
     default:
-      // result = `${days}/${monthStr}/${years} ${hours}:${minutes}`;
-      result = `DD/MM/YYYY hh:mm`;
+      result = `DD/MM/YYYY HH:mm`;
       break;
   }
   return moment(date).format(result);
