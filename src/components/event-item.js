@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {MAX_OFFERS_OPTION, POINTS_TYPE_ACTIVITY} from "../const.js";
-import {formatTime, formatTimeDuration} from "../utils/common.js";
+import {formatTime, formatTimeDuration, upperCaseFirst} from "../utils/common.js";
 
 const createTripEventOffersMarkup = (offer) => {
   return (
@@ -23,7 +23,7 @@ export const createTripEventItemTemplate = (tripEvent) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${typePrefix} ${city}</h3>
+        <h3 class="event__title">${upperCaseFirst(type)} ${typePrefix} ${city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
