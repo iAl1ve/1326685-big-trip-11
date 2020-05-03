@@ -1,7 +1,10 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, CITIES, offers as listOffers} from "../const.js";
-import {formatTime, upperCaseFirst} from "../utils/common.js";
+import {upperCaseFirst, formatDate} from "../utils/common.js";
 import {getRandomDescriptions, createOffers} from "../utils/data.js";
+import flatpickr from "flatpickr";
+
+import "flatpickr/dist/flatpickr.min.css";
 
 const createTypeMarkup = (elem, tripType) => {
   return (
@@ -40,10 +43,14 @@ const createImageMarkup = (image) => {
 };
 
 const createTripEventEditTemplate = (tripEvent) => {
-  const {type, city, description, price, offers, images, startDate, endDate, isFavorite} = tripEvent;
+  let {type, city, description, price, offers, images, startDate, endDate, isFavorite} = tripEvent;
   const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const cityMarkup = CITIES.map((it) => createCityMarkup(it)).join(`\n`);
+
+  startDate = startDate ? formatDate(startDate) : ``;
+  endDate = endDate ? formatDate(endDate) : ``;
+
   let offersMarkup;
   let imageMarkup;
   if (offers) {
@@ -92,12 +99,12 @@ const createTripEventEditTemplate = (tripEvent) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate ? formatTime(startDate) : ``}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate ? formatTime(endDate) : ``}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -151,9 +158,12 @@ export default class EventEdit extends AbstractSmartComponent {
     super();
     this._event = event;
 
+    this._flatpickr = null;
     this._submitHandler = null;
     this._setCloseButtonClickHandler = null;
     this._setFavoritesButtonClickHandler = null;
+
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -170,6 +180,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -190,6 +202,25 @@ export default class EventEdit extends AbstractSmartComponent {
   setFavoritesButtonClickHandler(cb) {
     this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, cb);
     this._setFavoritesButtonClickHandler = cb;
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const dateElement = this.getElement().querySelectorAll(`.event__input--time`);
+    const listDateProcessing = [this._event.startDate, this._event.endDate];
+
+    dateElement.forEach((elem, index) => {
+      this._flatpickr = flatpickr(elem, {
+        enableTime: true,
+        dateFormat: `d/m/Y H:i`,
+        allowInput: true,
+        defaultDate: listDateProcessing[index] || `today`,
+      });
+    });
   }
 
   _subscribeOnEvents() {
