@@ -1,8 +1,24 @@
 import {getRandomIntegerNumber} from "./utils/common.js";
 
-export const FILTERS_NAME = [`Everything`, `Future`, `Past`];
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};
+
+export const MenuItem = {
+  TABLE: `table`,
+  STATS: `stats`,
+};
+
+export const SortItem = {
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`,
+};
+
 export const SORTS_NAME = [`Event`, `Time`, `Price`];
-export const MENU_ITEMS = [`Table`, `Stats`];
+
 export const MAX_OFFERS_OPTION = 3;
 export const KEY_ESC = `Escape`;
 export const KEY_ESC_CODE = 27;

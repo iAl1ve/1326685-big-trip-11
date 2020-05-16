@@ -18,11 +18,13 @@ export const getSumPrice = (array) => {
 };
 
 export const getRandomDate = (date) => {
+  const pastDays = (date > new Date()) ? 0 : 1;
+
   const targetDate = new Date(date);
   const diffDays = getRandomIntegerNumber(0, MAX_DAY_GENERATION);
   const diffMinutes = getRandomIntegerNumber(0, 60);
 
-  targetDate.setDate(targetDate.getDate() + diffDays);
+  targetDate.setDate(targetDate.getDate() + diffDays - pastDays);
   targetDate.setMinutes(targetDate.getMinutes() + diffMinutes);
 
   return targetDate;
@@ -61,3 +63,17 @@ export const upperCaseFirst = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+export const getCurrentDateFromValue = (value) => {
+  const [day, month, shortYear, hours, minutes] = value.split(/[.,\/ - :]/);
+  const dateString = `20${shortYear}-${month}-${day}T${hours}:${minutes}`;
+  return dateString;
+};
+
+export const activateElement = (activeCurrentElement, container, activeClass) => {
+  const activeElement = container.querySelector(`.${activeClass}`);
+
+  if (activeElement) {
+    activeElement.classList.remove(activeClass);
+    activeCurrentElement.classList.add(activeClass);
+  }
+};

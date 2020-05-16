@@ -13,9 +13,9 @@ const createTripEventOffersMarkup = (offer) => {
 };
 
 export const createTripEventItemTemplate = (tripEvent) => {
-  const {type, city, price, offers, startDate, endDate} = tripEvent;
+  const {type, destination, price, offers, startDate, endDate} = tripEvent;
   const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
-  const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`);
+  const offersMarkup = offers ? offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`) : ``;
 
   const startDateTime = startDate ? formatDate(startDate, `datetime`) : ``;
   const startEventTime = startDate ? formatTime(startDate) : ``;
@@ -29,7 +29,7 @@ export const createTripEventItemTemplate = (tripEvent) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${upperCaseFirst(type)} ${typePrefix} ${city}</h3>
+        <h3 class="event__title">${upperCaseFirst(type)} ${typePrefix} ${destination}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -61,7 +61,6 @@ export default class Event extends AbstractComponent {
   constructor(event) {
     super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
