@@ -1,5 +1,6 @@
-import AbstractComponent from "./abstract-component.js";
-import {SORTS_NAME} from "../const.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import {activateElement} from "../utils/common.js";
+import {SortItem} from "../const.js";
 
 const createTripSortMarkup = (name, isChecked) => {
   return (
@@ -12,7 +13,7 @@ const createTripSortMarkup = (name, isChecked) => {
 };
 
 const createTripSortTemplate = (sorts) => {
-  const sortsMarkup = sorts.map((it, i) => createTripSortMarkup(it, i === 0)).join(`\n`);
+  const sortsMarkup = Object.values(sorts).map((it, i) => createTripSortMarkup(it, i === 0)).join(`\n`);
 
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -23,55 +24,64 @@ const createTripSortTemplate = (sorts) => {
   );
 };
 
-export default class Sort extends AbstractComponent {
+export default class Sort extends AbstractSmartComponent {
   constructor(sorts) {
     super();
     this._sorts = sorts;
-    this._currenSortType = null;
-    this._element = null;
+    this._currentSortType = null;
+
+    this._sortTypeChangeHandler = null;
   }
 
   getTemplate() {
     return createTripSortTemplate(this._sorts);
   }
 
+  rerender() {
+    super.rerender();
+  }
+
+  // Сбрасывает значение фильтра на дефолтное
+  reset() {
+    this._currentSortType = `sort-${SortItem.EVENT}`;
+    this.rerender();
+  }
+
+  recoveryListeners() {
+    this.setSortTypeChangeHandler(this._sortTypeChangeHandler);
+  }
+
   getSortType() {
-    return this._currenSortType;
+    return this._currentSortType;
   }
 
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
-
       if (evt.target.tagName !== `LABEL`) {
         return;
       }
 
       const sortType = evt.target.htmlFor;
 
-      if (this._currenSortType !== sortType) {
-        this._currenSortType = sortType;
+      if (this._currentSortType !== sortType) {
+        this._currentSortType = sortType;
 
-        // Изменяем стили в соответсвии с макетом, если это не сортировка по умолчанию
-        if (this.getElement().textContent !== SORTS_NAME[0]) {
-          const activeBtnSort = document.querySelector(`.trip-sort__btn--active`);
-          if (activeBtnSort) {
-            activeBtnSort.classList.remove(`trip-sort__btn--active`, `trip-sort__btn--by-increase`);
-          }
-          evt.target.classList.add(`trip-sort__btn--active`, `trip-sort__btn--by-increase`);
-
-          document.querySelector(`.trip-sort__item--day`).textContent = ``;
-        } else {
+        // Изменяем стили в соответсвии с макетом, если это сортировка по умолчанию
+        if (this.getElement().textContent === SortItem.EVENT) {
           document.querySelector(`.trip-sort__item--day`).textContent = `Day`;
+        } else {
+          document.querySelector(`.trip-sort__item--day`).textContent = ``;
         }
 
-        document.querySelector(`input[name=trip-sort]:checked`).checked = false;
+        activateElement(evt.target, this.getElement(), `trip-sort__btn--active`);
+
         document.querySelector(`#${sortType}`).checked = true;
 
-        handler(this._currenSortType);
+        handler(this._currentSortType);
       }
 
-
+      this._sortTypeChangeHandler = handler;
     });
   }
 }

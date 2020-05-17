@@ -4,16 +4,22 @@ import {getRandomDescriptions, createPhotos, createOffers} from "../utils/data.j
 
 const generateEvent = () => {
   const startDate = getRandomDate(new Date());
+  let endDate = getRandomDate(startDate);
+
+  while (endDate < startDate) {
+    endDate = getRandomDate(startDate);
+  }
 
   return {
+    id: String(new Date() + Math.random()),
     type: getRandomArrayItem(POINTS_TYPE_TRANSFER.concat(POINTS_TYPE_ACTIVITY)),
-    city: getRandomArrayItem(CITIES),
+    destination: getRandomArrayItem(CITIES),
     description: getRandomDescriptions(),
     price: getRandomIntegerNumber(price.MIN, price.MAX),
     offers: createOffers(),
     images: createPhotos(),
     startDate,
-    endDate: getRandomDate(startDate),
+    endDate,
     isFavorite: Math.random() >= 0.5,
   };
 };
