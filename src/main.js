@@ -10,6 +10,7 @@ const EVENTS_COUNT = 20;
 
 const allTripEvents = generateTripEvents(EVENTS_COUNT);
 const eventsModel = new EventsModel();
+allTripEvents.sort((a, b) => a.startDate - b.startDate)
 eventsModel.setEvents(allTripEvents);
 
 const newEventButton = document.querySelector(`.trip-main__event-add-btn`);

@@ -53,7 +53,7 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._sortComponent = new SortComponent(SortItem);
     this._tripEvents = null;
-    this._creatingNewEvent = null;
+    this._newEvent = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -68,7 +68,7 @@ export default class TripController {
     this._tripEvents = document.querySelector(`.trip-events`);
     render(this._tripEvents, this._daysComponent);
 
-    const sortEvents = this._eventsModel.getEvents().slice().sort((a, b) => a.startDate - b.startDate);
+    const sortEvents = this._eventsModel.getEvents();
 
     // Получим уникальные дни, месяцев путешествий и ВСЕ посещенные города в сгененированных моках
     const daysEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getDate()))];
@@ -97,8 +97,6 @@ export default class TripController {
   _renderEvents(events, sortType = `sort-event`) {
     let eventController = [];
     if (sortType === `sort-event`) {
-      // Сортируем еще раз для правильного отображения
-      events.sort((a, b) => a.startDate - b.startDate);
       const daysEvent = [...new Set(events.map((elem) => elem.startDate.getDate()))];
       for (let day = 0; day < daysEvent.length; day++) {
         // Отфильтруем событий по дате
@@ -118,7 +116,7 @@ export default class TripController {
   }
 
   createEvent() {
-    if (this._creatingNewEvent) {
+    if (this._newEvent) {
       return;
     }
     // Закрываем открытые формы для редактирования и сбрасываем сортировку и фильтр
@@ -128,8 +126,8 @@ export default class TripController {
 
     // Добавляем после сортировки новый элемент
     const positionNewElement = this._sortComponent ? this._sortComponent.getElement() : this._tripEvents.querySelector(`h2`);
-    this._creatingNewEvent = new EventController(positionNewElement, this._onDataChange, this._onViewChange);
-    this._creatingNewEvent.render(EmptyEvent, EventControllerMode.ADDING);
+    this._newEvent = new EventController(positionNewElement, this._onDataChange, this._onViewChange);
+    this._newEvent.render(EmptyEvent, EventControllerMode.ADDING);
 
     this._newEventButton.setAttribute(`disabled`, `disabled`);
   }
@@ -157,7 +155,7 @@ export default class TripController {
 
   _onDataChange(eventController, oldData, newData, favorite) {
     if (oldData === EmptyEvent) {
-      this._creatingNewEvent = null;
+      this._newEvent = null;
 
       if (newData === null) {
         // Удаляем новый

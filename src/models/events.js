@@ -1,7 +1,7 @@
 import {getEventsByFilter} from "../utils/filter.js";
 import {FilterType} from "../const.js";
 
-export default class Tasks {
+export default class Events {
   constructor() {
     this._events = [];
     this._activeFilterType = FilterType.ALL;
@@ -42,14 +42,14 @@ export default class Tasks {
     return true;
   }
 
-  updateEvent(id, task) {
+  updateEvent(id, event) {
     const index = this._events.findIndex((it) => it.id === id);
 
     if (index === -1) {
       return false;
     }
-    task.id = id;
-    this._events = [].concat(this._events.slice(0, index), task, this._events.slice(index + 1));
+    event.id = id;
+    this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
     this._callHandlers(this._dataChangeHandlers);
 
     return true;

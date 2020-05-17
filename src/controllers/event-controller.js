@@ -93,8 +93,6 @@ export default class EventController {
 
       if (this._mode === Mode.ADDING) {
         this._onDataChange(this, this._event, data);
-      } else {
-        this._onDataChange(this, this._event, data);
       }
 
 
