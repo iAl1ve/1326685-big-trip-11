@@ -1,5 +1,5 @@
-import AbstractComponent from "./abstract-component.js";
-import {upperCaseFirst} from "../utils/common.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import {upperCaseFirst, activateElement} from "../utils/common.js";
 
 const createMenuItem = (name, isChecked) => {
   return (
@@ -17,33 +17,37 @@ const createMenuTemplate = (menuItems) => {
   );
 };
 
-export default class Menu extends AbstractComponent {
+export default class Menu extends AbstractSmartComponent {
   constructor(menuItems) {
     super();
     this._menuItems = menuItems;
+
+    this._menuTypeChangeHandler = null;
   }
 
   getTemplate() {
     return createMenuTemplate(this._menuItems);
   }
 
-  setActiveItem(menuItem) {
-    const item = this.getElement().querySelector(`#${menuItem}`);
+  rerender() {
+    super.rerender();
+  }
 
-    if (item) {
-      item.checked = true;
-    }
+  recoveryListeners() {
+    this.setOnChange(this._menuTypeChangeHandler);
   }
 
   setOnChange(cb) {
-    this.getElement().addEventListener(`change`, (evt) => {
-      if (evt.target.tagName !== `INPUT`) {
+    this.getElement().addEventListener(`click`, (evt) => {
+
+      if (evt.target.tagName !== `A`) {
         return;
       }
 
-      const menuItem = evt.target.id;
-
-      cb(menuItem);
+      const menuItem = evt.target.textContent.toLowerCase();
+      activateElement(evt.target, this.getElement(), `trip-tabs__btn--active`);
+      this._menuTypeChangeHandler = menuItem;
+      cb(this._menuTypeChangeHandler);
     });
   }
 }

@@ -51,11 +51,7 @@ export default class Sort extends AbstractSmartComponent {
     this.setSortTypeChangeHandler(this._sortTypeChangeHandler);
   }
 
-  getSortType() {
-    return this._currentSortType;
-  }
-
-  setSortTypeChangeHandler(handler) {
+  setSortTypeChangeHandler(cb) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
       if (evt.target.tagName !== `LABEL`) {
@@ -78,10 +74,10 @@ export default class Sort extends AbstractSmartComponent {
 
         document.querySelector(`#${sortType}`).checked = true;
 
-        handler(this._currentSortType);
+        cb(this._currentSortType);
       }
-
-      this._sortTypeChangeHandler = handler;
     });
+
+    this._sortTypeChangeHandler = cb;
   }
 }

@@ -50,8 +50,7 @@ export const formatDate = (date, mode = `show`) => {
   return moment(date).format(result);
 };
 
-export const formatTimeDuration = (endDate, startDate) => {
-  const date = endDate - startDate;
+export const formatTimeDuration = (date) => {
   const day = moment(date).format(`D`) - 1;
   const hours = moment(date).format(`H`);
   const minutes = moment(date).format(`mm`);

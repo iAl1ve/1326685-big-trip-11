@@ -28,7 +28,6 @@ export default class TripInfo extends AbstractComponent {
     this._days = days;
     this._months = months;
     this._cities = cities;
-    this._element = null;
   }
 
   getTemplate() {

@@ -19,9 +19,30 @@ export const SortItem = {
 
 export const SORTS_NAME = [`Event`, `Time`, `Price`];
 
+export const HIDDEN_CLASS = `visually-hidden`;
 export const MAX_OFFERS_OPTION = 3;
 export const KEY_ESC = `Escape`;
 export const KEY_ESC_CODE = 27;
+export const BAR_HEIGHT = 55;
+
+export const EventEmoji = {
+  TAXI: `🚕`,
+  BUS: `🚌`,
+  TRAIN: `🚂`,
+  SHIP: `🛳`,
+  TRANSPORT: `🚊`,
+  DRIVE: `🚗`,
+  FLIGHT: `✈`,
+  CHECKIN: `🏨`,
+  SIGHTSEEING: `🏛`,
+  RESTAURANT: `🍴`,
+};
+
+export const ChartType = {
+  MONEY: `MONEY`,
+  TRANSPORT: `TRANSPORT`,
+  TIME: `TIME SPENT`
+};
 
 export const CITIES = [`London`, `Edinburg`, `Amsterdam`, `Geneva`, `Milan`, `Chamonix`];
 
