@@ -42,8 +42,9 @@ const getGroupedEvents = (daysComponent, dayComponent, events, onDataChange, onV
 };
 
 export default class TripController {
-  constructor(eventsModel, filterController, newEventButton) {
+  constructor(eventsModel, tripEvents, filterController, newEventButton) {
     this._eventsModel = eventsModel;
+    this._tripEvents = tripEvents;
     this._filterController = filterController;
     this._newEventButton = newEventButton;
 
@@ -52,7 +53,7 @@ export default class TripController {
     this._container = this._daysComponent.getElement();
     this._noEventsComponent = new NoEventsComponent();
     this._sortComponent = new SortComponent(SortItem);
-    this._tripEvents = null;
+
     this._newEvent = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -65,7 +66,6 @@ export default class TripController {
   }
 
   render() {
-    this._tripEvents = document.querySelector(`.trip-events`);
     render(this._tripEvents, this._daysComponent);
 
     const sortEvents = this._eventsModel.getEvents();
@@ -195,5 +195,15 @@ export default class TripController {
   _onFilterChange() {
     this._sortComponent.reset();
     this._updateEvents();
+  }
+
+  show() {
+    this._tripEvents.classList.remove(`trip-events--hidden`);
+    this._filterController.reset();
+  }
+
+  hide() {
+    this._tripEvents.classList.add(`trip-events--hidden`);
+    this._filterController.reset();
   }
 }

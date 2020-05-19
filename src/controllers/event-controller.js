@@ -91,10 +91,7 @@ export default class EventController {
       evt.preventDefault();
       const data = this._eventEditComponent.getData();
 
-      if (this._mode === Mode.ADDING) {
-        this._onDataChange(this, this._event, data);
-      }
-
+      this._onDataChange(this, this._event, data);
 
       this._closeEditEvent();
     });
