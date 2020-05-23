@@ -51,3 +51,17 @@ export const activateElement = (activeCurrentElement, container, activeClass) =>
     activeCurrentElement.classList.add(activeClass);
   }
 };
+
+export const switchFormStatus = (form, status) => {
+  const inputs = form.getElementsByTagName(`input`);
+  const buttons = form.getElementsByTagName(`button`);
+
+  changeStatus(inputs, status);
+  changeStatus(buttons, status);
+};
+
+const changeStatus = (elements, status) => {
+  for (const item of elements) {
+    item.disabled = status;
+  }
+};

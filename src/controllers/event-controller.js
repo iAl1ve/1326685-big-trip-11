@@ -1,8 +1,8 @@
 import Event from "../models/event-item.js";
 import EventEditComponent from "../components/event-edit.js";
 import EventComponent from "../components/event-item.js";
-import {KEY_ESC, KEY_ESC_CODE, POINTS_TYPE_TRANSFER, SHAKE_ANIMATION_TIMEOUT} from "../const.js";
-import {getCurrentDateFromValue} from "../utils/common.js";
+import {KEY_ESC, KEY_ESC_CODE, POINTS_TYPE_TRANSFER, SHAKE_ANIMATION_TIMEOUT, SHAKE_STYLE, ProcessingButton, DefaultButton} from "../const.js";
+import {getCurrentDateFromValue, switchFormStatus} from "../utils/common.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
 export const Mode = {
@@ -121,6 +121,12 @@ export default class EventController {
       const formData = this._eventEditComponent.getData();
       const data = parseFormData(formData, this._offers, this._destinations);
 
+      this._eventEditComponent.setData({
+        SAVE_BUTTON_TEXT: ProcessingButton.SAVE_BUTTON_TEXT,
+      });
+      switchFormStatus(this._eventEditComponent.getElement(), true);
+      this._eventEditComponent.removeFlatpickr();
+
       data.id = this._event.id;
       this._onDataChange(this, this._event, data);
 
@@ -134,6 +140,11 @@ export default class EventController {
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        DELETE_BUTTON_TEXT: ProcessingButton.DELETE_BUTTON_TEXT,
+      });
+      switchFormStatus(this._eventEditComponent.getElement(), true);
+
       this._onDataChange(this, this._event, null);
     });
 
@@ -154,7 +165,15 @@ export default class EventController {
   }
 
   shake() {
-    this._eventEditComponent.shake(SHAKE_ANIMATION_TIMEOUT);
+    this._eventEditComponent.getElement().style = SHAKE_STYLE;
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style = ``;
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventEditComponent.setData(DefaultButton);
+      switchFormStatus(this._eventEditComponent.getElement(), false);
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _onEscKeyDown(evt) {

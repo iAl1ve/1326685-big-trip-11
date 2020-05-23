@@ -8,7 +8,7 @@ import TripInfoComponent from "../components/info.js";
 import CostsComponent from "../components/cost.js";
 import {formatDate, getSumPrice} from "../utils/common.js";
 import {render, RenderPosition} from "../utils/render.js";
-import {SortItem} from "../const.js";
+import {SortItem, FormElementState} from "../const.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -135,13 +135,13 @@ export default class TripController {
     this._newEvent = new EventController(positionNewElement, this._offers, this._destinations, this._onDataChange, this._onViewChange);
     this._newEvent.render(EmptyEvent, EventControllerMode.ADDING);
 
-    this._newEventButton.setAttribute(`disabled`, `disabled`);
+    this._newEventButton.setAttribute(FormElementState.DISABLED, FormElementState.DISABLED);
   }
 
   _removeEvents() {
     this._showedEventControllers.forEach((eventController) => eventController.destroy());
     this._showedEventControllers = [];
-    this._newEventButton.removeAttribute(`disabled`);
+    this._newEventButton.removeAttribute(FormElementState.DISABLED);
     // Пока через очистку контейнера, иначе не очищаются дни
     this._container.innerHTML = ``;
   }
@@ -173,7 +173,7 @@ export default class TripController {
           .then((eventModel) => {
             // Добавляем новый
             this._eventsModel.addEvent(eventModel);
-            this._newEventButton.removeAttribute(`disabled`);
+            this._newEventButton.removeAttribute(FormElementState.DISABLED);
             // Перерисовываю элемент в общей структуре событий, ибо не понятно куда вставлять новый элемент
             eventController.destroy();
             this._updateEvents();
