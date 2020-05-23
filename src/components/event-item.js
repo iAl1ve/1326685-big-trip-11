@@ -5,7 +5,7 @@ import {formatTime, formatDate, formatTimeDuration, upperCaseFirst} from "../uti
 const createTripEventOffersMarkup = (offer) => {
   return (
     `<li class="event__offer">
-       <span class="event__offer-title">${offer.text}</span>
+       <span class="event__offer-title">${offer.title}</span>
        &plus;
        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
     </li>`
@@ -15,6 +15,7 @@ const createTripEventOffersMarkup = (offer) => {
 export const createTripEventItemTemplate = (tripEvent) => {
   const {type, destination, price, offers, startDate, endDate} = tripEvent;
   const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+
   const offersMarkup = offers ? offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`) : ``;
 
   const startDateTime = startDate ? formatDate(startDate, `datetime`) : ``;
@@ -30,7 +31,7 @@ export const createTripEventItemTemplate = (tripEvent) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${upperCaseFirst(type)} ${typePrefix} ${destination}</h3>
+        <h3 class="event__title">${upperCaseFirst(type)} ${typePrefix} ${destination.name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

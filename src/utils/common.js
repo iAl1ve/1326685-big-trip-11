@@ -1,33 +1,8 @@
 import moment from "moment";
 
-const MAX_DAY_GENERATION = 3;
-
-export const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length);
-
-  return array[randomIndex];
-};
-
-export const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
 // Стоимость поездки без опций (offers)
 export const getSumPrice = (array) => {
   return array.reduce((total, elem) => total + elem.price, 0);
-};
-
-export const getRandomDate = (date) => {
-  const pastDays = (date > new Date()) ? 0 : 1;
-
-  const targetDate = new Date(date);
-  const diffDays = getRandomIntegerNumber(0, MAX_DAY_GENERATION);
-  const diffMinutes = getRandomIntegerNumber(0, 60);
-
-  targetDate.setDate(targetDate.getDate() + diffDays - pastDays);
-  targetDate.setMinutes(targetDate.getMinutes() + diffMinutes);
-
-  return targetDate;
 };
 
 export const formatTime = (date) => {

@@ -1,7 +1,8 @@
+import Event from "../models/event-item.js";
 import EventEditComponent from "../components/event-edit.js";
 import EventComponent from "../components/event-item.js";
-import {KEY_ESC, KEY_ESC_CODE, POINTS_TYPE_TRANSFER} from "../const.js";
-import {createOffers} from "../utils/data.js";
+import {KEY_ESC, KEY_ESC_CODE, POINTS_TYPE_TRANSFER, SHAKE_ANIMATION_TIMEOUT} from "../const.js";
+import {getCurrentDateFromValue} from "../utils/common.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
 export const Mode = {
@@ -13,21 +14,49 @@ export const Mode = {
 
 export const EmptyEvent = {
   type: POINTS_TYPE_TRANSFER[0],
-  destination: ``,
-  description: ``,
+  destination: {
+    name: ``,
+    description: [],
+    photo: []
+  },
   price: 0,
-  offers: createOffers(),
+  offers: [],
   images: ``,
   startDate: new Date(),
   endDate: new Date(),
   isFavorite: false,
 };
 
+const parseFormData = (formData, allOffers, allDestinations) => {
+  const currentType = formData.get(`event-type`);
+  const dateStart = getCurrentDateFromValue(formData.get(`event-start-time`));
+  const dateEnd = getCurrentDateFromValue(formData.get(`event-end-time`));
+
+  const typeOffers = allOffers.find((it) => it.type.toString() === currentType).offers;
+  const offersFromForm = formData.getAll(`event-offer`);
+  const checkedOffers = typeOffers.filter((offer) => offersFromForm.some((formOffer) => offer.title === formOffer));
+
+  const city = formData.get(`event-destination`);
+  const currentDestination = allDestinations.find((it)=> it.name === city);
+
+  return new Event({
+    "type": currentType,
+    "destination": currentDestination,
+    "base_price": Number(formData.get(`event-price`)),
+    "offers": checkedOffers,
+    "date_from": dateStart ? new Date(dateStart) : null,
+    "date_to": dateEnd ? new Date(dateEnd) : null,
+    "is_favorite": Boolean(formData.get(`event-favorite`)),
+  });
+};
+
 export default class EventController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, offers, destinations, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this._offers = offers;
+    this._destinations = destinations;
     this._mode = Mode.DEFAULT;
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -43,7 +72,7 @@ export default class EventController {
     const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(this._event);
-    this._eventEditComponent = new EventEditComponent(this._event);
+    this._eventEditComponent = new EventEditComponent(this._event, this._offers, this._destinations);
 
     this._setItemHandlers();
 
@@ -89,17 +118,19 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._eventEditComponent.getData();
+      const formData = this._eventEditComponent.getData();
+      const data = parseFormData(formData, this._offers, this._destinations);
 
+      data.id = this._event.id;
       this._onDataChange(this, this._event, data);
 
       this._closeEditEvent();
     });
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(this, this._event, Object.assign({}, this._event, {
-        isFavorite: !this._event.isFavorite,
-      }), `favorite`);
+      const newEvent = Event.clone(this._event);
+      newEvent.isFavorite = !newEvent.isFavorite;
+      this._onDataChange(this, this._event, newEvent, `favorite`);
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
@@ -120,6 +151,10 @@ export default class EventController {
   _replaceEditToEvent() {
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
+  }
+
+  shake() {
+    this._eventEditComponent.shake(SHAKE_ANIMATION_TIMEOUT);
   }
 
   _onEscKeyDown(evt) {
