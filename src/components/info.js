@@ -3,13 +3,14 @@ import {MONTHS} from "../const.js";
 
 const createTripInfoTemplate = (days, months, cities) => {
   let tripTitle = ``;
+
   let tripDates = days[0] ? `${days[0]}&nbsp;&mdash;&nbsp;${days[days.length - 1]}` : ``;
   if (cities.length < 3) {
     cities.forEach((city, index) => {
-      tripTitle += index < cities.length > 1 ? `${tripTitle} &mdash;` : `${tripTitle}`;
+      tripTitle += index.name < cities.length > 1 ? `${tripTitle} &mdash;` : `${tripTitle}`;
     });
   } else {
-    tripTitle = `${cities[0]} &mdash; ... &mdash; ${cities[cities.length - 1]}`;
+    tripTitle = `${cities[0].name} &mdash; ... &mdash; ${cities[cities.length - 1].name}`;
   }
 
   return (

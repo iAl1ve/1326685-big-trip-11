@@ -4,6 +4,8 @@ import {FilterType} from "../const.js";
 export default class Events {
   constructor() {
     this._events = [];
+    this._offers = [];
+    this._destinations = [];
     this._activeFilterType = FilterType.ALL;
 
     this._dataChangeHandlers = [];
@@ -26,6 +28,22 @@ export default class Events {
   setFilter(filterType) {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
+  }
+
+  setOffers(offers) {
+    this._offers = Array.from(offers);
+  }
+
+  getOffers() {
+    return this._offers;
+  }
+
+  setDestinations(destinations) {
+    this._destinations = Array.from(destinations);
+  }
+
+  getDestinations() {
+    return this._destinations;
   }
 
   removeEvent(id) {

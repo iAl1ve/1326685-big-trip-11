@@ -14,37 +14,38 @@ const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
 
   switch (sortType) {
-    case `sort-price`:
+    case `sort-${SortItem.PRICE}`:
       sortedEvents = events.slice().sort((a, b) => b.price - a.price);
       break;
-    case `sort-time`:
+    case `sort-${SortItem.TIME}`:
       sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
       break;
-    case `sort-event`:
-      sortedEvents = events.slice();
+    case `sort-${SortItem.EVENT}`:
+      sortedEvents = events;
       break;
   }
 
   return sortedEvents;
 };
 
-const getGroupedEvents = (daysComponent, dayComponent, events, onDataChange, onViewChange) => {
+const getGroupedEvents = (daysComponent, dayComponent, events, offers, destinations, onDataChange, onViewChange) => {
   render(daysComponent, dayComponent);
 
   const eventListComponent = new EventListComponent();
   render(dayComponent.getElement(), eventListComponent);
 
   return events.map((event) => {
-    const eventController = new EventController(eventListComponent.getElement(), onDataChange, onViewChange);
+    const eventController = new EventController(eventListComponent.getElement(), offers, destinations, onDataChange, onViewChange);
     eventController.render(event, EventControllerMode.DEFAULT);
     return eventController;
   });
 };
 
 export default class TripController {
-  constructor(eventsModel, tripEvents, filterController, newEventButton) {
+  constructor(eventsModel, tripEvents, api, filterController, newEventButton) {
     this._eventsModel = eventsModel;
     this._tripEvents = tripEvents;
+    this._api = api;
     this._filterController = filterController;
     this._newEventButton = newEventButton;
 
@@ -55,6 +56,8 @@ export default class TripController {
     this._sortComponent = new SortComponent(SortItem);
 
     this._newEvent = null;
+    this._offers = null;
+    this._destinations = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -69,6 +72,9 @@ export default class TripController {
     render(this._tripEvents, this._daysComponent);
 
     const sortEvents = this._eventsModel.getEvents();
+
+    this._offers = this._eventsModel.getOffers();
+    this._destinations = this._eventsModel.getDestinations();
 
     // Получим уникальные дни, месяцев путешествий и ВСЕ посещенные города в сгененированных моках
     const daysEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getDate()))];
@@ -104,12 +110,12 @@ export default class TripController {
         const dateEvent = [...new Set(eventsByDays.map((elem) => formatDate(elem.startDate, `dayitem`)))];
         const dayComponent = new DayComponent(day + 1, dateEvent);
 
-        eventController = eventController.concat(getGroupedEvents(this._container, dayComponent, eventsByDays, this._onDataChange, this._onViewChange));
+        eventController = eventController.concat(getGroupedEvents(this._container, dayComponent, eventsByDays, this._offers, this._destinations, this._onDataChange, this._onViewChange));
       }
     } else {
       const dayComponent = new DayComponent();
 
-      eventController = eventController.concat(getGroupedEvents(this._container, dayComponent, events, this._onDataChange, this._onViewChange));
+      eventController = eventController.concat(getGroupedEvents(this._container, dayComponent, events, this._offers, this._destinations, this._onDataChange, this._onViewChange));
     }
 
     this._showedEventControllers = eventController;
@@ -126,7 +132,7 @@ export default class TripController {
 
     // Добавляем после сортировки новый элемент
     const positionNewElement = this._sortComponent ? this._sortComponent.getElement() : this._tripEvents.querySelector(`h2`);
-    this._newEvent = new EventController(positionNewElement, this._onDataChange, this._onViewChange);
+    this._newEvent = new EventController(positionNewElement, this._offers, this._destinations, this._onDataChange, this._onViewChange);
     this._newEvent.render(EmptyEvent, EventControllerMode.ADDING);
 
     this._newEventButton.setAttribute(`disabled`, `disabled`);
@@ -142,6 +148,7 @@ export default class TripController {
 
   _onSortTypeChange(sortType) {
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
+
     this._removeEvents();
 
     this._renderEvents(sortedEvents, sortType);
@@ -162,29 +169,47 @@ export default class TripController {
         eventController.destroy();
         this._updateEvents();
       } else {
-        // Добавляем новый
-        this._eventsModel.addEvent(newData);
-        this._newEventButton.removeAttribute(`disabled`);
-        // Перерисовываю элемент в общей структуре событий, ибо не понятно куда вставлять новый элемент
-        eventController.destroy();
-        this._updateEvents();
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            // Добавляем новый
+            this._eventsModel.addEvent(eventModel);
+            this._newEventButton.removeAttribute(`disabled`);
+            // Перерисовываю элемент в общей структуре событий, ибо не понятно куда вставлять новый элемент
+            eventController.destroy();
+            this._updateEvents();
 
-        this._showedEventControllers = [].concat(eventController, this._showedEventControllers);
+            this._showedEventControllers = [].concat(eventController, this._showedEventControllers);
+          })
+          .catch(() => {
+            eventController.shake();
+          });
       }
     } else if (newData === null) {
-      // Удаляем существующий
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          // Удаляем существующий
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
+        });
     } else {
-      // Обновляем существующий
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, newData)
+        .then((eventModel) => {
+          // Обновляем существующий
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
 
-      if (isSuccess) {
-        if (!favorite) {
-          eventController.render(newData, EventControllerMode.DEFAULT);
-        }
-
-      }
+          if (isSuccess) {
+            if (!favorite) {
+              eventController.render(newData, EventControllerMode.DEFAULT);
+              this._updateEvents();
+            }
+          }
+        })
+        .catch(() => {
+          eventController.shake();
+        });
     }
   }
 
