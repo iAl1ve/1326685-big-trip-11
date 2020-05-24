@@ -116,10 +116,11 @@ export default class EventController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setSubmitHandler((evt) => {
+    this._eventEditComponent.setSubmitHandler((evt, id) => {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
       const data = parseFormData(formData, this._offers, this._destinations);
+      data.id = id || String(new Date() + Math.random());
 
       this._eventEditComponent.setData({
         SAVE_BUTTON_TEXT: ProcessingButton.SAVE_BUTTON_TEXT,
@@ -127,7 +128,6 @@ export default class EventController {
       switchFormStatus(this._eventEditComponent.getElement(), true);
       this._eventEditComponent.removeFlatpickr();
 
-      data.id = this._event.id;
       this._onDataChange(this, this._event, data);
 
       this._closeEditEvent();

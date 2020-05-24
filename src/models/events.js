@@ -66,7 +66,7 @@ export default class Events {
     if (index === -1) {
       return false;
     }
-    event.id = id;
+
     this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
     this._callHandlers(this._dataChangeHandlers);
 
@@ -74,7 +74,6 @@ export default class Events {
   }
 
   addEvent(event) {
-    event.id = String(new Date() + Math.random());
     this._events = [].concat(event, this._events);
     this._callHandlers(this._dataChangeHandlers);
   }

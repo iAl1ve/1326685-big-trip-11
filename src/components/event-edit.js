@@ -205,7 +205,7 @@ const checkDateValue = (startDate, endDate, component) => {
 };
 
 const checkPriceValue = (value, component) => {
-  if (value < 0) {
+  if (value < 0 || value === '') {
     component.setCustomValidity(`Enter the correct event price`);
     return false;
   }
@@ -329,6 +329,12 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
+  _checkDestinationValue() {
+    const destinationComponent = this.getElement().querySelector(`.event__input--destination`);
+    const result = checkDestinationValue(destinationComponent.value, destinationComponent, this._destinations);
+    return result;
+  }
+
   _applyFlatpickr() {
     this.removeFlatpickr();
 
@@ -359,8 +365,12 @@ export default class EventEdit extends AbstractSmartComponent {
       })
     );
 
+    element.addEventListener(`click`, () => {
+      this._checkDestinationValue();
+    });
+
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (checkDestinationValue(evt.target.value, evt.target, this._destinations)) {
+      if (this._checkDestinationValue()) {
         this._currentDestination = this._destinations.find((it) => it.name === evt.target.value);
 
         this.rerender();
