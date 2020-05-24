@@ -1,5 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY} from "../const.js";
+import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, DefaultButton} from "../const.js";
 import {upperCaseFirst, formatDate, getCurrentDateFromValue} from "../utils/common.js";
 import flatpickr from "flatpickr";
 
@@ -95,10 +95,9 @@ const createDescriptionMarkup = (destination) => {
 
 const createTripEventEditTemplate = (tripEvent, options) => {
   let {id, offers, isFavorite} = tripEvent;
-  let {type, price, destination, offersList, destinationsList, startDate, endDate} = options;
+  let {type, price, destination, offersList, destinationsList, startDate, endDate, externalData} = options;
 
   const favoriteMarkup = (id) ? createFavoriteMarkup(isFavorite) : ``;
-  const resetButtonText = (id) ? `Delete` : `Cancel`;
   const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const cityMarkup = destinationsList.length > 0 ? destinationsList.map((it) => createCityMarkup(it.name)).join(`\n`) : ``;
@@ -113,6 +112,9 @@ const createTripEventEditTemplate = (tripEvent, options) => {
   const offersMarkup = currentTypeOffers.length ? createOffersMarkup(currentTypeOffers, offers) : ``;
 
   const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+
+  const deleteButtonText = externalData.DELETE_BUTTON_TEXT;
+  const saveButtonText = externalData.SAVE_BUTTON_TEXT;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -167,8 +169,8 @@ const createTripEventEditTemplate = (tripEvent, options) => {
           <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price ? price : `0`}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${resetButtonText}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
+        <button class="event__reset-btn" type="reset">${id ? deleteButtonText : `Cancel`}</button>
         ${favoriteMarkup}
       </header>
       <section class="event__details">
@@ -203,7 +205,7 @@ const checkDateValue = (startDate, endDate, component) => {
 };
 
 const checkPriceValue = (value, component) => {
-  if (value < 0) {
+  if (value < 0 || value === '') {
     component.setCustomValidity(`Enter the correct event price`);
     return false;
   }
@@ -223,6 +225,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._currentDestination = event.destination;
     this._offers = offers;
     this._destinations = destinations;
+    this._externalData = DefaultButton;
 
     this._flatpickr = null;
     this._submitHandler = null;
@@ -243,14 +246,19 @@ export default class EventEdit extends AbstractSmartComponent {
       destinationsList: this._destinations,
       startDate: this._startDate,
       endDate: this._endDate,
+      externalData: this._externalData,
     });
   }
 
-  removeElement() {
+  removeFlatpickr() {
     if (this._flatpickr) {
       this._flatpickr.destroy();
       this._flatpickr = null;
     }
+  }
+
+  removeElement() {
+    this.removeFlatpickr();
 
     super.removeElement();
   }
@@ -287,14 +295,9 @@ export default class EventEdit extends AbstractSmartComponent {
     return formData;
   }
 
-  shake(timeout) {
-    this.getElement().style.animation = `shake ${timeout / 1000}s`;
-
-
-    setTimeout(() => {
-      this.getElement().style.animation = ``;
-
-    }, timeout);
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultButton, data);
+    this.rerender();
   }
 
   setCloseButtonClickHandler(cb) {
@@ -326,11 +329,14 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
+  _checkDestinationValue() {
+    const destinationComponent = this.getElement().querySelector(`.event__input--destination`);
+    const result = checkDestinationValue(destinationComponent.value, destinationComponent, this._destinations);
+    return result;
+  }
+
   _applyFlatpickr() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
-    }
+    this.removeFlatpickr();
 
     const dateElement = this.getElement().querySelectorAll(`.event__input--time`);
     const listDateProcessing = [this._event.startDate, this._event.endDate];
@@ -359,8 +365,12 @@ export default class EventEdit extends AbstractSmartComponent {
       })
     );
 
+    element.addEventListener(`click`, () => {
+      this._checkDestinationValue();
+    });
+
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (checkDestinationValue(evt.target.value, evt.target, this._destinations)) {
+      if (this._checkDestinationValue()) {
         this._currentDestination = this._destinations.find((it) => it.name === evt.target.value);
 
         this.rerender();

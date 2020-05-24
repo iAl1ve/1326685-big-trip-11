@@ -8,7 +8,7 @@ import TripInfoComponent from "../components/info.js";
 import CostsComponent from "../components/cost.js";
 import {formatDate, getSumPrice} from "../utils/common.js";
 import {render, RenderPosition} from "../utils/render.js";
-import {SortItem} from "../const.js";
+import {SortItem, FormElementState} from "../const.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -42,9 +42,9 @@ const getGroupedEvents = (daysComponent, dayComponent, events, offers, destinati
 };
 
 export default class TripController {
-  constructor(eventsModel, tripEvents, api, filterController, newEventButton) {
+  constructor(eventsModel, tripEventsСontainer, api, filterController, newEventButton) {
     this._eventsModel = eventsModel;
-    this._tripEvents = tripEvents;
+    this._tripEventsСontainer = tripEventsСontainer;
     this._api = api;
     this._filterController = filterController;
     this._newEventButton = newEventButton;
@@ -69,7 +69,7 @@ export default class TripController {
   }
 
   render() {
-    render(this._tripEvents, this._daysComponent);
+    render(this._tripEventsСontainer, this._daysComponent);
 
     const sortEvents = this._eventsModel.getEvents();
 
@@ -91,7 +91,7 @@ export default class TripController {
 
 
     if (sortEvents.length === 0) {
-      render(this._tripEvents, this._noEventsComponent);
+      render(this._tripEventsСontainer, this._noEventsComponent);
       return;
     }
 
@@ -131,17 +131,17 @@ export default class TripController {
     this._filterController.reset();
 
     // Добавляем после сортировки новый элемент
-    const positionNewElement = this._sortComponent ? this._sortComponent.getElement() : this._tripEvents.querySelector(`h2`);
+    const positionNewElement = this._sortComponent ? this._sortComponent.getElement() : this._tripEventsСontainer.querySelector(`h2`);
     this._newEvent = new EventController(positionNewElement, this._offers, this._destinations, this._onDataChange, this._onViewChange);
     this._newEvent.render(EmptyEvent, EventControllerMode.ADDING);
 
-    this._newEventButton.setAttribute(`disabled`, `disabled`);
+    this._newEventButton.setAttribute(FormElementState.DISABLED, FormElementState.DISABLED);
   }
 
   _removeEvents() {
     this._showedEventControllers.forEach((eventController) => eventController.destroy());
     this._showedEventControllers = [];
-    this._newEventButton.removeAttribute(`disabled`);
+    this._newEventButton.removeAttribute(FormElementState.DISABLED);
     // Пока через очистку контейнера, иначе не очищаются дни
     this._container.innerHTML = ``;
   }
@@ -173,7 +173,7 @@ export default class TripController {
           .then((eventModel) => {
             // Добавляем новый
             this._eventsModel.addEvent(eventModel);
-            this._newEventButton.removeAttribute(`disabled`);
+            this._newEventButton.removeAttribute(FormElementState.DISABLED);
             // Перерисовываю элемент в общей структуре событий, ибо не понятно куда вставлять новый элемент
             eventController.destroy();
             this._updateEvents();
@@ -223,12 +223,12 @@ export default class TripController {
   }
 
   show() {
-    this._tripEvents.classList.remove(`trip-events--hidden`);
+    this._tripEventsСontainer.classList.remove(`trip-events--hidden`);
     this._filterController.reset();
   }
 
   hide() {
-    this._tripEvents.classList.add(`trip-events--hidden`);
+    this._tripEventsСontainer.classList.add(`trip-events--hidden`);
     this._filterController.reset();
   }
 }

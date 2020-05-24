@@ -11,32 +11,25 @@ const formatDataForChart = (events, chartType) => {
     case ChartType.TRANSPORT:
       POINTS_TYPE_ACTIVITY.forEach((type) => delete copyEvents[type]);
       for (const key in copyEvents) {
-        if (copyEvents[key] !== undefined) {
           eventsForChart.push([key, copyEvents[key].length]);
-        }
       }
       break;
 
     case ChartType.MONEY:
       for (const key in copyEvents) {
-        if (copyEvents[key] !== undefined) {
           eventsForChart.push([key, copyEvents[key].reduce((total, item) => {
             return total + parseInt(item.price, 10);
           }, 0)]);
-        }
       }
       break;
 
     case ChartType.TIME:
       for (const key in copyEvents) {
-
-        if (copyEvents[key] !== undefined) {
           eventsForChart.push([key, copyEvents[key].reduce((total, item) => {
             const durationTime = item.endDate.getTime() - item.startDate.getTime();
 
             return total + durationTime;
           }, 0)]);
-        }
       }
       break;
   }
