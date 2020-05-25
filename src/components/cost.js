@@ -10,7 +10,6 @@ export default class Costs extends AbstractComponent {
   constructor(cost) {
     super();
     this._cost = cost;
-    this._element = null;
   }
 
   getTemplate() {

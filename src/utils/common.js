@@ -1,8 +1,15 @@
 import moment from "moment";
 
-// Стоимость поездки без опций (offers)
+// Стоимость поездки со всеми опциями (offers)
 export const getSumPrice = (array) => {
-  return array.reduce((total, elem) => total + elem.price, 0);
+  let sumPrice = 0;
+  array.forEach((event) => {
+    sumPrice += event.price;
+    sumPrice += event.offers.reduce((total, elem) => {
+      return total + elem.price;
+    }, 0);
+  });
+  return sumPrice;
 };
 
 export const formatTime = (date) => {
