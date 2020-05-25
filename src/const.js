@@ -30,6 +30,12 @@ export const ProcessingButton = {
   SAVE_BUTTON_TEXT: `Saving...`,
 };
 
+export const URL = {
+  POINTS: `points`,
+  OFFERS: `offers`,
+  DESTINATIONS: `destinations`,
+};
+
 export const EventEmoji = {
   TAXI: `🚕`,
   BUS: `🚌`,

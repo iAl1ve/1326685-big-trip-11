@@ -205,7 +205,7 @@ const checkDateValue = (startDate, endDate, component) => {
 };
 
 const checkPriceValue = (value, component) => {
-  if (value < 0 || value === '') {
+  if (value < 0 || value === ``) {
     component.setCustomValidity(`Enter the correct event price`);
     return false;
   }
