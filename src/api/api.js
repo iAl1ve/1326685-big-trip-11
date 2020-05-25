@@ -1,5 +1,5 @@
 import Event from "../models/event-item.js";
-import {INFORMATIONAL_STATUS, REDIRECTION_STATUS} from "../const.js";
+import {INFORMATIONAL_STATUS, REDIRECTION_STATUS, URL} from "../const.js";
 
 const Method = {
   GET: `GET`,
@@ -23,24 +23,34 @@ export default class API {
   }
 
   getEvents() {
-    return this._load({url: `points`})
+    return this._load({url: URL.POINTS})
       .then((response) => response.json())
       .then(Event.parseEvents);
   }
 
   getOffers() {
-    return this._load({url: `offers`})
+    return this._load({url: URL.OFFERS})
       .then((response) => response.json());
   }
 
   getDestinations() {
-    return this._load({url: `destinations`})
+    return this._load({url: URL.DESTINATIONS})
+      .then((response) => response.json());
+  }
+
+  sync(data) {
+    return this._load({
+      url: `${URL.POINTS}/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
       .then((response) => response.json());
   }
 
   updateEvent(id, event) {
     return this._load({
-      url: `points/${id}`,
+      url: `${URL.POINTS}/${id}`,
       method: Method.PUT,
       body: JSON.stringify(event.toRAW()),
       headers: new Headers({"Content-Type": `application/json`}),
@@ -51,7 +61,7 @@ export default class API {
 
   createEvent(event) {
     return this._load({
-      url: `points`,
+      url: URL.POINTS,
       method: Method.POST,
       body: JSON.stringify(event.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
@@ -61,7 +71,7 @@ export default class API {
   }
 
   deleteEvent(id) {
-    return this._load({url: `points/${id}`, method: Method.DELETE});
+    return this._load({url: `${URL.POINTS}/${id}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
