@@ -1,8 +1,11 @@
+import API from "./api/api.js";
 import TripController from "./controllers/trip-controller.js";
 import ListLoading from "./components/list-loading.js";
+import MainInfoController from "./controllers/main-info-controller.js";
+import MainCostController from "./controllers/main-cost-controller.js";
 import MenuComponent from "./components/menu.js";
+import TripInfoContainer from "./components/trip-info-container";
 import FilterController from "./controllers/filter.js";
-import API from "./api/api.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
@@ -10,7 +13,7 @@ import {MenuItem} from "./const.js";
 import EventsModel from "./models/events.js";
 import Statistics from "./components/statistics.js";
 
-const AUTHORIZATION = `Basic adECucLoRuVNmd63iSZe3`;
+const AUTHORIZATION = `Basic adE1ycLo45VNmd63iSZe3`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
@@ -28,7 +31,11 @@ const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 const tripControlsElement = document.querySelector(`.trip-controls`);
 const menuElement = tripControlsElement.querySelector(`h2`);
 const tripEvents = document.querySelector(`.trip-events`);
+const tripMainElement = document.querySelector(`.trip-main`);
 const menuComponent = new MenuComponent(MenuItem);
+
+const tripInfoContainer = new TripInfoContainer();
+render(tripMainElement, tripInfoContainer, RenderPosition.AFTERBEGIN);
 
 render(menuElement, menuComponent, RenderPosition.AFTEREND);
 render(tripEvents, statisticsComponent, RenderPosition.AFTEREND);
@@ -36,6 +43,11 @@ render(tripEvents, listLoadingComponent);
 const filterController = new FilterController(tripControlsElement, eventsModel);
 filterController.render();
 
+const tripMainInfoElement = document.querySelector(`.trip-main__trip-info`);
+const mainInfoController = new MainInfoController(tripMainInfoElement, eventsModel);
+const mainCostController = new MainCostController(tripMainInfoElement, eventsModel);
+mainInfoController.render();
+mainCostController.render();
 
 const tripController = new TripController(eventsModel, tripEvents, apiWithProvider, filterController, newEventButton);
 statisticsComponent.hide();

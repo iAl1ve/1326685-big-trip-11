@@ -14,12 +14,10 @@ const createTripInfoTemplate = (days, months, cities) => {
   }
 
   return (
-    `<section class="trip-main__trip-info  trip-info">
-      <div class="trip-info__main">
-        <h1 class="trip-info__title">${tripTitle}</h1>
-        <p class="trip-info__dates">${MONTHS[months[0]] ? MONTHS[months[0]] : ``} ${tripDates}</p>
-      </div>
-    </section>`
+    `<div class="trip-info__main">
+      <h1 class="trip-info__title">${tripTitle}</h1>
+      <p class="trip-info__dates">${MONTHS[months[0]] ? MONTHS[months[0]] : ``} ${tripDates}</p>
+    </div>`
   );
 };
 

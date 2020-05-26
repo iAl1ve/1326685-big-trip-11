@@ -4,9 +4,7 @@ import DaysComponent from "../components/days.js";
 import DayComponent from "../components/day-item.js";
 import EventListComponent from "../components/events-list.js";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-controller.js";
-import TripInfoComponent from "../components/info.js";
-import CostsComponent from "../components/cost.js";
-import {formatDate, getSumPrice} from "../utils/common.js";
+import {formatDate} from "../utils/common.js";
 import {render, RenderPosition} from "../utils/render.js";
 import {SortItem, FormElementState} from "../const.js";
 
@@ -76,20 +74,6 @@ export default class TripController {
     this._offers = this._eventsModel.getOffers();
     this._destinations = this._eventsModel.getDestinations();
 
-    // Получим уникальные дни, месяцев путешествий и ВСЕ посещенные города в сгененированных моках
-    const daysEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getDate()))];
-    const monthsEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getMonth()))];
-    const destinationEvent = [...sortEvents.map((elem) => elem.destination)];
-
-    const tripPrice = getSumPrice(sortEvents);
-    const tripMainElement = document.querySelector(`.trip-main`);
-
-    render(tripMainElement, new TripInfoComponent(daysEvent, monthsEvent, destinationEvent), RenderPosition.AFTERBEGIN);
-
-    const tripCost = tripMainElement.querySelector(`.trip-info`);
-    render(tripCost, new CostsComponent(tripPrice));
-
-
     if (sortEvents.length === 0) {
       render(this._tripEventsСontainer, this._noEventsComponent);
       return;
@@ -100,9 +84,9 @@ export default class TripController {
     this._renderEvents(sortEvents);
   }
 
-  _renderEvents(events, sortType = `sort-event`) {
+  _renderEvents(events, sortType = `sort-${SortItem.EVENT}`) {
     let eventController = [];
-    if (sortType === `sort-event`) {
+    if (sortType === `sort-${SortItem.EVENT}`) {
       const daysEvent = [...new Set(events.map((elem) => elem.startDate.getDate()))];
       for (let day = 0; day < daysEvent.length; day++) {
         // Отфильтруем событий по дате
@@ -142,7 +126,7 @@ export default class TripController {
     this._showedEventControllers.forEach((eventController) => eventController.destroy());
     this._showedEventControllers = [];
     this._newEventButton.removeAttribute(FormElementState.DISABLED);
-    // Пока через очистку контейнера, иначе не очищаются дни
+    // Очищаем контейнер, иначе не очищаются дни
     this._container.innerHTML = ``;
   }
 
