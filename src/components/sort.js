@@ -24,7 +24,7 @@ const createTripSortTemplate = (sorts) => {
   );
 };
 
-export default class Sort extends AbstractSmartComponent {
+export default class Sorting extends AbstractSmartComponent {
   constructor(sorts) {
     super();
     this._sorts = sorts;
@@ -48,10 +48,10 @@ export default class Sort extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setSortTypeChangeHandler(this._sortTypeChangeHandler);
+    this.setTypeChangeHandler(this._sortTypeChangeHandler);
   }
 
-  setSortTypeChangeHandler(cb) {
+  setTypeChangeHandler(cb) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
       if (evt.target.tagName !== `LABEL`) {

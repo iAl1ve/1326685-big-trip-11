@@ -23,12 +23,12 @@ export default class Event {
     };
   }
 
-  static parseEvent(item) {
+  static parseItem(item) {
     return new Event(item);
   }
 
-  static parseEvents(items) {
-    return items.map(Event.parseEvent);
+  static parseItems(items) {
+    return items.map(Event.parseItem);
   }
 
   static clone(item) {

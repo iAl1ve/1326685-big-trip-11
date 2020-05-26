@@ -12,15 +12,15 @@ export default class Events {
     this._filterChangeHandlers = [];
   }
 
-  getEvents() {
+  getItems() {
     return getEventsByFilter(this._events, this._activeFilterType);
   }
 
-  getEventsAll() {
+  getItemsAll() {
     return this._events;
   }
 
-  setEvents(events) {
+  setItems(events) {
     this._events = Array.from(events);
     this._callHandlers(this._dataChangeHandlers);
   }
@@ -46,7 +46,7 @@ export default class Events {
     return this._destinations;
   }
 
-  removeEvent(id) {
+  removeItem(id) {
     const index = this._events.findIndex((it) => it.id === id);
 
     if (index === -1) {
@@ -60,7 +60,7 @@ export default class Events {
     return true;
   }
 
-  updateEvent(id, event) {
+  updateItem(id, event) {
     const index = this._events.findIndex((it) => it.id === id);
 
     if (index === -1) {
@@ -73,7 +73,7 @@ export default class Events {
     return true;
   }
 
-  addEvent(event) {
+  addItem(event) {
     this._events = [].concat(event, this._events);
     this._callHandlers(this._dataChangeHandlers);
   }

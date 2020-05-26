@@ -33,11 +33,11 @@ export const formatDate = (date, mode = `show`) => {
 };
 
 export const formatTimeDuration = (date) => {
-  const day = moment(date).format(`D`) - 1;
-  const hours = moment(date).format(`H`);
+  const day = moment(date).format(`DD`) - 1;
+  const hours = moment(date).format(`HH`);
   const minutes = moment(date).format(`mm`);
 
-  return `${day > 0 ? day + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
+  return `${day > 0 ? moment(day).format(`DD`) + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
 
 export const upperCaseFirst = (str) => {

@@ -1,5 +1,5 @@
-import Event from "../models/event-item.js";
-import {INFORMATIONAL_STATUS, REDIRECTION_STATUS, URL} from "../const.js";
+import Event from "../models/event.js";
+import {StatusCode, URL} from "../const.js";
 
 const Method = {
   GET: `GET`,
@@ -9,11 +9,10 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= INFORMATIONAL_STATUS && response.status < REDIRECTION_STATUS) {
-    return response;
-  } else {
+  if (response.status < StatusCode.INFORMATIONAL && response.status > StatusCode.REDIRECTION) {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
+  return response;
 };
 
 export default class API {
@@ -25,7 +24,7 @@ export default class API {
   getEvents() {
     return this._load({url: URL.POINTS})
       .then((response) => response.json())
-      .then(Event.parseEvents);
+      .then(Event.parseItems);
   }
 
   getOffers() {
@@ -56,7 +55,7 @@ export default class API {
       headers: new Headers({"Content-Type": `application/json`}),
     })
       .then((response) => response.json())
-      .then(Event.parseEvent);
+      .then(Event.parseItem);
   }
 
   createEvent(event) {
@@ -67,7 +66,7 @@ export default class API {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
-      .then(Event.parseEvent);
+      .then(Event.parseItem);
   }
 
   deleteEvent(id) {

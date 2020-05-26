@@ -1,5 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {POINTS_TYPE_TRANSFER, POINTS_TYPE_ACTIVITY, DefaultButton} from "../const.js";
+import {POINT_TRANSFER_TYPES, POINT_ACTIVITY_TYPES, DefaultButton} from "../const.js";
 import {upperCaseFirst, formatDate, getCurrentDateFromValue} from "../utils/common.js";
 import flatpickr from "flatpickr";
 
@@ -74,10 +74,7 @@ const createImageMarkup = (image) => {
 const createDescriptionMarkup = (destination) => {
   const images = destination.pictures;
   const description = destination.description;
-  let imageMarkup;
-  if (images) {
-    imageMarkup = images.map((it) => createImageMarkup(it)).join(`\n`);
-  }
+  const imageMarkup = (images) ? images.map((it) => createImageMarkup(it)).join(`\n`) : ``;
 
   return (
     `<section class="event__section  event__section--destination">
@@ -98,8 +95,8 @@ const createTripEventEditTemplate = (tripEvent, options) => {
   const {type, price, destination, offersList, destinationsList, startDate, endDate, externalData} = options;
 
   const favoriteMarkup = (id) ? createFavoriteMarkup(isFavorite) : ``;
-  const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it, type)).join(`\n`);
-  const activityMarkup = POINTS_TYPE_ACTIVITY.map((it) => createTypeMarkup(it, type)).join(`\n`);
+  const transferMarkup = POINT_TRANSFER_TYPES.map((it) => createTypeMarkup(it, type)).join(`\n`);
+  const activityMarkup = POINT_ACTIVITY_TYPES.map((it) => createTypeMarkup(it, type)).join(`\n`);
   const cityMarkup = destinationsList.length > 0 ? destinationsList.map((it) => createCityMarkup(it.name)).join(`\n`) : ``;
 
   const descriptionMarkup = destination.name ? createDescriptionMarkup(destination) : ``;
@@ -111,7 +108,7 @@ const createTripEventEditTemplate = (tripEvent, options) => {
 
   const offersMarkup = currentTypeOffers.length ? createOffersMarkup(currentTypeOffers, offers) : ``;
 
-  const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+  const typePrefix = POINT_ACTIVITY_TYPES.some((it) => type === it) ? `in` : `to`;
 
   const deleteButtonText = externalData.DELETE_BUTTON_TEXT;
   const saveButtonText = externalData.SAVE_BUTTON_TEXT;
@@ -338,16 +335,16 @@ export default class EventEdit extends AbstractSmartComponent {
   _applyFlatpickr() {
     this.removeFlatpickr();
 
-    const dateElement = this.getElement().querySelectorAll(`.event__input--time`);
-    const listDateProcessing = [this._event.startDate, this._event.endDate];
+    const dateElements = this.getElement().querySelectorAll(`.event__input--time`);
+    const defaultDates = [this._event.startDate, this._event.endDate];
 
-    dateElement.forEach((elem, index) => {
+    dateElements.forEach((elem, index) => {
       this._flatpickr = flatpickr(elem, {
         enableTime: true,
         dateFormat: `d/m/y H:i`,
         allowInput: true,
         [`time_24hr`]: true,
-        defaultDate: listDateProcessing[index] || `today`,
+        defaultDate: defaultDates[index] || `today`,
       });
     });
   }
@@ -369,7 +366,7 @@ export default class EventEdit extends AbstractSmartComponent {
       this._checkDestinationValue();
     });
 
-    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+    element.querySelector(`.event__input--destination`).addEventListener(`input`, (evt) => {
       if (this._checkDestinationValue()) {
         this._currentDestination = this._destinations.find((it) => it.name === evt.target.value);
 

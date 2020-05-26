@@ -1,4 +1,4 @@
-import Event from "../models/event-item.js";
+import Event from "../models/event.js";
 import {URL} from "../const.js";
 import {nanoid} from "nanoid";
 
@@ -40,7 +40,7 @@ export default class Provider {
     }
     const storeEvents = Object.values(this._store.getItems());
 
-    return Promise.resolve(Event.parseEvents(storeEvents));
+    return Promise.resolve(Event.parseItems(storeEvents));
   }
 
   getOffers() {

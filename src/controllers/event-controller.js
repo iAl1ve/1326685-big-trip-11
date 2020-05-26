@@ -1,31 +1,9 @@
-import Event from "../models/event-item.js";
+import Event from "../models/event.js";
 import EventEditComponent from "../components/event-edit.js";
-import EventComponent from "../components/event-item.js";
-import {KEY_ESC, KEY_ESC_CODE, POINTS_TYPE_TRANSFER, SHAKE_ANIMATION_TIMEOUT, SHAKE_STYLE, ProcessingButton, DefaultButton} from "../const.js";
+import EventComponent from "../components/event.js";
+import {KEY_ESC, KEY_ESC_CODE, POINT_TRANSFER_TYPES, Shake, ProcessingButton, DefaultButton} from "../const.js";
 import {getCurrentDateFromValue, switchFormStatus} from "../utils/common.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
-
-export const Mode = {
-  ADDING: `adding`,
-  DEFAULT: `default`,
-  EDIT: `edit`,
-  NEW: `new`,
-};
-
-export const EmptyEvent = {
-  type: POINTS_TYPE_TRANSFER[0],
-  destination: {
-    name: ``,
-    description: [],
-    photo: []
-  },
-  price: 0,
-  offers: [],
-  images: ``,
-  startDate: new Date(),
-  endDate: new Date(),
-  isFavorite: false,
-};
 
 const parseFormData = (formData, allOffers, allDestinations) => {
   const currentType = formData.get(`event-type`);
@@ -102,6 +80,9 @@ export default class EventController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
+    if (this._mode === Mode.ADDING) {
+      remove(this._eventEditComponent);
+    }
   }
 
   destroy() {
@@ -113,6 +94,7 @@ export default class EventController {
   _setItemHandlers() {
     this._eventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEdit();
+      this._eventEditComponent.reset();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
@@ -165,21 +147,25 @@ export default class EventController {
   }
 
   shake() {
-    this._eventEditComponent.getElement().style = SHAKE_STYLE;
-    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventEditComponent.getElement().style = Shake.STYLE;
+    this._eventEditComponent.getElement().style.animation = `shake ${Shake.ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {
       this._eventEditComponent.getElement().style = ``;
       this._eventEditComponent.getElement().style.animation = ``;
       this._eventEditComponent.setData(DefaultButton);
       switchFormStatus(this._eventEditComponent.getElement(), false);
-    }, SHAKE_ANIMATION_TIMEOUT);
+    }, Shake.ANIMATION_TIMEOUT);
   }
 
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === KEY_ESC || evt.keyCode === KEY_ESC_CODE;
 
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this.destroy();
+        this._onViewChange();
+      }
       this._closeEditEvent();
     }
   }
@@ -189,3 +175,24 @@ export default class EventController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
+
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
+export const EmptyEvent = {
+  type: POINT_TRANSFER_TYPES[0],
+  destination: {
+    name: ``,
+    description: [],
+    photo: []
+  },
+  price: 0,
+  offers: [],
+  images: ``,
+  startDate: new Date(),
+  endDate: new Date(),
+  isFavorite: false,
+};

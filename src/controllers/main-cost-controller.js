@@ -15,7 +15,7 @@ export default class MainCostController {
   }
 
   render() {
-    const sortEvents = this._eventsModel.getEventsAll();
+    const sortEvents = this._eventsModel.getItemsAll();
     const container = this._container;
     const oldCostsComponent = this._costsComponent;
 

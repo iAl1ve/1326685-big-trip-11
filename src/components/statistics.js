@@ -1,18 +1,18 @@
 import AbstractComponent from "./abstract-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {BAR_HEIGHT, POINTS_TYPE_ACTIVITY, EventEmoji, ChartType} from "../const.js";
+import {BAR_HEIGHT, POINT_ACTIVITY_TYPES, EventEmoji, ChartType} from "../const.js";
 import {formatTimeDuration} from "../utils/common.js";
 
 const formatDataForChart = (events, chartType) => {
   const copyEvents = Object.assign({}, events);
-  const eventsForChart = [];
+  const chartEvents = [];
   switch (chartType) {
     case ChartType.TRANSPORT:
-      POINTS_TYPE_ACTIVITY.forEach((type) => delete copyEvents[type]);
+      POINT_ACTIVITY_TYPES.forEach((type) => delete copyEvents[type]);
       for (const key in copyEvents) {
         if (copyEvents.hasOwnProperty(key)) {
-          eventsForChart.push([key, copyEvents[key].length]);
+          chartEvents.push([key, copyEvents[key].length]);
         }
       }
       break;
@@ -20,7 +20,7 @@ const formatDataForChart = (events, chartType) => {
     case ChartType.MONEY:
       for (const key in copyEvents) {
         if (copyEvents.hasOwnProperty(key)) {
-          eventsForChart.push([key, copyEvents[key].reduce((total, item) => {
+          chartEvents.push([key, copyEvents[key].reduce((total, item) => {
             return total + parseInt(item.price, 10);
           }, 0)]);
         }
@@ -30,7 +30,7 @@ const formatDataForChart = (events, chartType) => {
     case ChartType.TIME:
       for (const key in copyEvents) {
         if (copyEvents.hasOwnProperty(key)) {
-          eventsForChart.push([key, copyEvents[key].reduce((total, item) => {
+          chartEvents.push([key, copyEvents[key].reduce((total, item) => {
             const durationTime = item.endDate.getTime() - item.startDate.getTime();
 
             return total + durationTime;
@@ -39,7 +39,7 @@ const formatDataForChart = (events, chartType) => {
       }
       break;
   }
-  return eventsForChart.sort((a, b) => b[1] - a[1]);
+  return chartEvents.sort((a, b) => b[1] - a[1]);
 };
 
 const formatterDataLabelsChart = (val, chartType) => {
@@ -193,7 +193,7 @@ export default class Statistics extends AbstractComponent {
   }
 
   _renderCharts() {
-    const events = this._eventsModel.getEventsAll();
+    const events = this._eventsModel.getItemsAll();
     const groupedItems = groupTripEventsByType(events);
 
     const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);

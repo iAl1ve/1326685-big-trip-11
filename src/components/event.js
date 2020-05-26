@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {MAX_OFFERS_OPTION, POINTS_TYPE_ACTIVITY} from "../const.js";
+import {MAX_OFFERS_OPTION, POINT_ACTIVITY_TYPES} from "../const.js";
 import {formatTime, formatDate, formatTimeDuration, upperCaseFirst} from "../utils/common.js";
 
 const createTripEventOffersMarkup = (offer) => {
@@ -12,9 +12,9 @@ const createTripEventOffersMarkup = (offer) => {
   );
 };
 
-export const createTripEventItemTemplate = (tripEvent) => {
+const createTripEventItemTemplate = (tripEvent) => {
   const {type, destination, price, offers, startDate, endDate} = tripEvent;
-  const typePrefix = POINTS_TYPE_ACTIVITY.some((it) => type === it) ? `in` : `to`;
+  const typePrefix = POINT_ACTIVITY_TYPES.some((it) => type === it) ? `in` : `to`;
 
   const offersMarkup = offers ? offers.map((it) => createTripEventOffersMarkup(it)).slice(0, MAX_OFFERS_OPTION).join(`\n`) : ``;
 

@@ -5,7 +5,7 @@ import MainInfoController from "./controllers/main-info-controller.js";
 import MainCostController from "./controllers/main-cost-controller.js";
 import MenuComponent from "./components/menu.js";
 import TripInfoContainer from "./components/trip-info-container";
-import FilterController from "./controllers/filter.js";
+import FilterController from "./controllers/filter-controller.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
@@ -16,7 +16,7 @@ import Statistics from "./components/statistics.js";
 const AUTHORIZATION = `Basic adE1ycLo45VNmd63iSZe3`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v1`;
+const STORE_VER = `v1444`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new API(END_POINT, AUTHORIZATION);
@@ -71,7 +71,7 @@ newEventButton.addEventListener(`click`, () => {
 
 apiWithProvider.getEvents()
   .then((events) => {
-    eventsModel.setEvents(events.sort((a, b) => a.startDate - b.startDate));
+    eventsModel.setItems(events.sort((a, b) => a.startDate - b.startDate));
     apiWithProvider.getOffers()
       .then((offers) => {
         eventsModel.setOffers(offers);
@@ -92,6 +92,7 @@ window.addEventListener(`load`, () => {
       // Действие, в случае ошибки при регистрации ServiceWorker
     });
 });
+
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

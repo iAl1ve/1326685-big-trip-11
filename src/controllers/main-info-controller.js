@@ -1,4 +1,4 @@
-import TripInfoComponent from "../components/info.js";
+import TripInfoComponent from "../components/trip-info.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 
 export default class MainInfoController {
@@ -15,15 +15,15 @@ export default class MainInfoController {
 
   render() {
     const container = this._container;
-    const sortEvents = this._eventsModel.getEventsAll();
+    const sortEvents = this._eventsModel.getItemsAll();
     const oldTripInfoComponent = this._tripInfoComponent;
 
     // Получим уникальные дни, месяцев путешествий и ВСЕ посещенные города в полученных данных
-    const daysEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getDate()))];
-    const monthsEvent = [...new Set(sortEvents.map((elem) => elem.startDate.getMonth()))];
-    const destinationEvent = [...sortEvents.map((elem) => elem.destination)];
+    const days = [...new Set(sortEvents.map((elem) => elem.startDate.getDate()))];
+    const months = [...new Set(sortEvents.map((elem) => elem.startDate.getMonth()))];
+    const destinations = [...sortEvents.map((elem) => elem.destination)];
 
-    this._tripInfoComponent = new TripInfoComponent(daysEvent, monthsEvent, destinationEvent);
+    this._tripInfoComponent = new TripInfoComponent(days, months, destinations);
 
     if (oldTripInfoComponent) {
       replace(this._tripInfoComponent, oldTripInfoComponent);
