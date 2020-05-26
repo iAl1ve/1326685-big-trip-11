@@ -94,8 +94,8 @@ const createDescriptionMarkup = (destination) => {
 };
 
 const createTripEventEditTemplate = (tripEvent, options) => {
-  let {id, offers, isFavorite} = tripEvent;
-  let {type, price, destination, offersList, destinationsList, startDate, endDate, externalData} = options;
+  const {id, offers, isFavorite} = tripEvent;
+  const {type, price, destination, offersList, destinationsList, startDate, endDate, externalData} = options;
 
   const favoriteMarkup = (id) ? createFavoriteMarkup(isFavorite) : ``;
   const transferMarkup = POINTS_TYPE_TRANSFER.map((it) => createTypeMarkup(it, type)).join(`\n`);
@@ -104,8 +104,8 @@ const createTripEventEditTemplate = (tripEvent, options) => {
 
   const descriptionMarkup = destination.name ? createDescriptionMarkup(destination) : ``;
 
-  startDate = startDate ? formatDate(startDate) : ``;
-  endDate = endDate ? formatDate(endDate) : ``;
+  const startDateEvent = startDate ? formatDate(startDate) : ``;
+  const endDateEvent = endDate ? formatDate(endDate) : ``;
 
   const currentTypeOffers = offersList.find((it) => it.type === type).offers;
 
@@ -153,12 +153,12 @@ const createTripEventEditTemplate = (tripEvent, options) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateEvent}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateEvent}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

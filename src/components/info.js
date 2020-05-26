@@ -4,7 +4,7 @@ import {MONTHS} from "../const.js";
 const createTripInfoTemplate = (days, months, cities) => {
   let tripTitle = ``;
 
-  let tripDates = days[0] ? `${days[0]}&nbsp;&mdash;&nbsp;${days[days.length - 1]}` : ``;
+  const tripDates = days[0] ? `${days[0]}&nbsp;&mdash;&nbsp;${days[days.length - 1]}` : ``;
   if (cities.length < 3) {
     cities.forEach((city, index) => {
       tripTitle += index.name < cities.length > 1 ? `${tripTitle} &mdash;` : `${tripTitle}`;
