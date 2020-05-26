@@ -16,7 +16,7 @@ import Statistics from "./components/statistics.js";
 const AUTHORIZATION = `Basic adE1ycLo45VNmd63iSZe3`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v1444`;
+const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new API(END_POINT, AUTHORIZATION);
