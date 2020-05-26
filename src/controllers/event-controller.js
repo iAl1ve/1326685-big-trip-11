@@ -191,7 +191,6 @@ export const EmptyEvent = {
   },
   price: 0,
   offers: [],
-  images: ``,
   startDate: new Date(),
   endDate: new Date(),
   isFavorite: false,
