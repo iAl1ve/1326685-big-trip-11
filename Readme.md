@@ -50,3 +50,4 @@ git clone SSH-адрес_вашего_форка
 
 [travis-image]: https://travis-ci.com/htmlacademy-ecmascript/1326685-big-trip-11.svg?branch=master
 [travis-url]: https://travis-ci.com/htmlacademy-ecmascript/1326685-big-trip-11
+
